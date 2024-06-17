@@ -23,7 +23,7 @@ use App\Http\Controllers\ResetPasswordController;
 // });
 // Route::group([
 //     'middleware' => 'api',
-// ], function ($router) {
+// ], function ($router) { /////     
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -33,3 +33,5 @@ use App\Http\Controllers\ResetPasswordController;
     Route::post('/codeCheck',[CodeCheckController::class,'codeCheck']);
     Route::post('/resetPassword',[ResetPasswordController::class,'resetPassword']);
 // });
+
+//
