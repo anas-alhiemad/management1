@@ -59,7 +59,7 @@ class AuthController extends Controller
 
          $validator = Validator::make($request->all(), [
                 'name' => 'required|string|between:2,100',
-                'type' => 'required|string',
+                'role' => 'required|string',
                 'email' => 'required|string|email|max:100|unique:users',
                 'number' => 'required|string|min:10',
                 'password' => 'required|string|min:6',
@@ -154,7 +154,7 @@ class AuthController extends Controller
     /**
      * Get the authenticated User.
      *
-     * 
+     *
      *
      * @return \Illuminate\Http\JsonResponse
      */

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\CodeCheckController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ResetPasswordController;
 
 /*
@@ -23,7 +24,8 @@ use App\Http\Controllers\ResetPasswordController;
 // });
 // Route::group([
 //     'middleware' => 'api',
-// ], function ($router) { /////     
+// ], function ($router) { /////
+
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -32,6 +34,21 @@ use App\Http\Controllers\ResetPasswordController;
     Route::post('/forgotPassword',[ForgotPasswordController::class,'forgotPassword']);
     Route::post('/codeCheck',[CodeCheckController::class,'codeCheck']);
     Route::post('/resetPassword',[ResetPasswordController::class,'resetPassword']);
+
+
+         ########################     api Staff #######################
+
+
+    Route::get('/showallstaff', [StaffController::class, 'showAllStaff']);
+    Route::post('/createstaff', [StaffController::class, 'createStaff']);
+    Route::get('/showstaff/{id}', [StaffController::class, 'showStaff']);
+    Route::post('/updatestaff/{id}', [StaffController::class, 'updateStaff']);
+    Route::post('/destroystaff/{id}', [StaffController::class, 'destroyStaff']);
+    Route::post('/loginstaff', [StaffController::class, 'loginStaff']);
+
+
+
+
 // });
 
 //
