@@ -36,7 +36,7 @@ use App\Http\Controllers\ResetPasswordController;
     Route::post('/resetPassword',[ResetPasswordController::class,'resetPassword']);
 
 
-         ########################     api Staff #######################
+         ########################     api Staff ########################
 
 
     Route::get('/showallstaff', [StaffController::class, 'showAllStaff']);

@@ -117,15 +117,23 @@ class StaffController extends Controller
         return response()->json(['message' => 'successfully updateStaff',
                                     'user' =>  $staff], 200);
     }
+
+
+
     public function destroyStaff($id)
     {
-        $staff = User::where('id', $id)->findOrFail($id);
+        $staff=User::firstWhere('id',$id);
+        ResetCodePassword::where('email', $staff->email)->delete();
         $staff->delete();
-
-        return response()->json(['message' => 'successfully destroyStaff'], 204);
+        return response()->json(['message' => 'successfully destroyStaff'],200);
     }
 
-    public function loginStaff(Request $request){
+
+
+
+
+    public function loginStaff(Request $request)
+    {
     	$validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|string|min:6',
