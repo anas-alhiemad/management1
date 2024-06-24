@@ -7,6 +7,8 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\CodeCheckController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\TypeController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +48,18 @@ use App\Http\Controllers\ResetPasswordController;
     Route::post('/destroystaff/{id}', [StaffController::class, 'destroyStaff']);
     Route::post('/loginstaff', [StaffController::class, 'loginStaff']);
 
+         ########################     api Type ########################
+    Route::apiResource('types', TypeController::class);
+
+             ########################     api Category ########################
+
+    Route::post('categories/{category}/accept', [CategoryController::class, 'acceptRequest']);
+    Route::post('categories/{category}/reject', [CategoryController::class, 'rejectRequest']);
+
+    Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
+    Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
+             
+    Route::apiResource('categories', CategoryController::class);
 
 
 
