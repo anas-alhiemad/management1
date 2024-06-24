@@ -55,9 +55,10 @@ class AuthController extends Controller
 
 
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
 
-         $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
                 'name' => 'required|string|between:2,100',
                 'role' => 'required|string',
                 'email' => 'required|string|email|max:100|unique:users',
@@ -70,12 +71,14 @@ class AuthController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
             }
 
-            $imageName = null;
+
+        $imageName = null;
             if ($request->hasFile('image')) {
                 $photo = $request->image;
                 $imageName = time() . '.' . $photo->getClientOriginalExtension();
                 $photo->move(public_path('uploads'), $imageName);
-            }
+
+                                                             }
 
 
         $user = User::create(array_merge(
@@ -96,7 +99,7 @@ class AuthController extends Controller
                                  ]);
 
          // Send email to user
-         Mail::to($request->email)
+        Mail::to($request->email)
               ->send(new SendCode($codeData->code));
 
         return response()->json([

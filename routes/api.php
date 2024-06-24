@@ -6,7 +6,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\CodeCheckController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\PendingRequestController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\BeneficiaryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +50,17 @@ use App\Http\Controllers\ResetPasswordController;
     Route::post('/loginstaff', [StaffController::class, 'loginStaff']);
 
 
+       #################   api beneficiary   ####################
+
+
+    Route::post('/addbeneficiary', [BeneficiaryController::class, 'addBeneficiary']);
+
+
+
+
+      ################ api pendingRequests #######################
+
+    Route::post('/approverequest/{id}', [PendingRequestController::class, 'approveRequest']);
 
 
 // });
