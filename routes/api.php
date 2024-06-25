@@ -8,8 +8,13 @@ use App\Http\Controllers\CodeCheckController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\PendingRequestController;
 use App\Http\Controllers\ResetPasswordController;
+<<<<<<< HEAD
+use App\Http\Controllers\TypeController;
+use App\Http\Controllers\CategoryController;
+=======
 use App\Http\Controllers\BeneficiaryController;
 
+>>>>>>> 86272ba649a8c31c366f686197a4592163e2cc11
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +54,18 @@ use App\Http\Controllers\BeneficiaryController;
     Route::post('/destroystaff/{id}', [StaffController::class, 'destroyStaff']);
     Route::post('/loginstaff', [StaffController::class, 'loginStaff']);
 
+         ########################     api Type ########################
+    Route::apiResource('types', TypeController::class);
+
+             ########################     api Category ########################
+
+    Route::post('categories/{category}/accept', [CategoryController::class, 'acceptRequest']);
+    Route::post('categories/{category}/reject', [CategoryController::class, 'rejectRequest']);
+
+    Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
+    Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
+             
+    Route::apiResource('categories', CategoryController::class);
 
        #################   api beneficiary   ####################
 
