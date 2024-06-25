@@ -2,8 +2,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+// use Illuminate\Support\ServiceProvider;
+// namespace App\Providers;
 
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Event;
+use App\Events\DataSent;
+use App\Listeners\HandleDataSent;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -13,6 +18,12 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
+
+    protected $listen = [
+        DataSent::class => [
+            HandleDataSent::class,
+        ],
+    ];
 
     /**
      * Bootstrap any application services.

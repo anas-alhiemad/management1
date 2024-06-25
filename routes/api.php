@@ -6,9 +6,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\CodeCheckController;
 use App\Http\Controllers\StaffController;
+use App\Http\Controllers\PendingRequestController;
 use App\Http\Controllers\ResetPasswordController;
+<<<<<<< HEAD
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\CategoryController;
+=======
+use App\Http\Controllers\BeneficiaryController;
+
+>>>>>>> 86272ba649a8c31c366f686197a4592163e2cc11
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +67,17 @@ use App\Http\Controllers\CategoryController;
              
     Route::apiResource('categories', CategoryController::class);
 
+       #################   api beneficiary   ####################
+
+
+    Route::post('/addbeneficiary', [BeneficiaryController::class, 'addBeneficiary']);
+
+
+
+
+      ################ api pendingRequests #######################
+
+    Route::post('/approverequest/{id}', [PendingRequestController::class, 'approveRequest']);
 
 
 // });
