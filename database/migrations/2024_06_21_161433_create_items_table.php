@@ -20,12 +20,8 @@ return new class extends Migration
             $table->boolean('available')->default(false); // if manager accept the Item requiest
             $table->date('expierd_date')->nullable();
     
-            $table->integer('type_id');
-         //   $table->foreign('type_id')->references('id')->on('types')->onDelete('cascade');
-
-         $table->integer('categorie_id');
-      //   $table->foreign('categories_id')->references('id')->on('categories')->cascadeOnDelete();
-        
+            $table->foreignId('type_id')->constrained('types'); // Foreign key to types table
+            $table->foreignId('category_id')->constrained('categories'); // Foreign key to categories table
             
             $table->timestamps();
         });
