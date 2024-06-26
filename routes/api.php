@@ -8,13 +8,10 @@ use App\Http\Controllers\CodeCheckController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\PendingRequestController;
 use App\Http\Controllers\ResetPasswordController;
-<<<<<<< HEAD
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\CategoryController;
-=======
 use App\Http\Controllers\BeneficiaryController;
 
->>>>>>> 86272ba649a8c31c366f686197a4592163e2cc11
 
 /*
 |--------------------------------------------------------------------------

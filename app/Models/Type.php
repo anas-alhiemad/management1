@@ -9,9 +9,9 @@ class Type extends Model
 {
     use HasFactory;
     protected $fillable = ['name'];
-
-    public function item()
+    
+    public function items()
     {
-        return $this->hasOne(Item::class);
+        return $this->hasMany(Item::class);
     }
 }
