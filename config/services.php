@@ -14,6 +14,11 @@ return [
     |
     */
 
+    'firebase' => [
+        'credentials' => storage_path('app/warehouse-management-d8a87-9ef7b1d2a2ba.json'),
+    ],
+
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),

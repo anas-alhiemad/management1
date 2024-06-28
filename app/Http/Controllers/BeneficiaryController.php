@@ -158,7 +158,7 @@ class BeneficiaryController extends Controller
         $requestPending = PendingRequest::create(['requsetPending' => array_merge($validator->validated())]);
 
         $admin = User::where('role', 'manager')->first();
-        $admin->notify(new BeneficiaryAddedNotification($validator));
+        $admin->notify(new BeneficiaryAddedNotification($validator,Auth::id()));
 
 
         return response()->json(['message' => 'Request submitted successfully.','data'=>$validator->validated()]);
