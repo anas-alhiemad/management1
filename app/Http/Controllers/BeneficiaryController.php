@@ -163,7 +163,7 @@ class BeneficiaryController extends Controller
 
         return response()->json(['message' => 'Request submitted successfully.','data'=>$validator->validated()]);
 
-
+// this commit 
     }
 }
 
