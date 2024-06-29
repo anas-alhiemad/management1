@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use App\Models\Item;
+use App\Models\User;
 use Illuminate\Http\Response;
 
 class CategoryController extends Controller
@@ -52,15 +54,32 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:categories,id',
+            'parent_id' => 'nullable',
         ]);
+        if($request->parent_id!=null){
+            $parent= Category::find($request->parent_id);
+            if($parent){
+             $category = Category::create($validated);
+             $user = User::where('role', 'manager')->first();
+     $notificationController = new NotificationController();
+             $notificationController->sendFCMNotification($user->id,"New Category requierd permission", "A new category ($request->name) needs your approve");
+     
+             return response()->json($category, Response::HTTP_CREATED);
+            }
+             else{
+                 return response()->json('parernt not exit', Response::HTTP_NOT_FOUND);
+             }
+        }else{
+            $category = Category::create($validated);
+            $user = User::where('role', 'manager')->first();
+    $notificationController = new NotificationController();
+            $notificationController->sendFCMNotification($user->id,"New Category requierd permission", "A new category ($request->name) needs your approve");
+    
+            return response()->json($category, Response::HTTP_CREATED);
+        }
 
-        $category = Category::create($validated);
 
-//$notificationController = new NotificationController();
-   //     $notificationController->sendFCMNotification('admin_user_id',"New Category requierd permission", "A new category ($request->name) needs your approve");
-
-        return response()->json($category, Response::HTTP_CREATED);
+      
     }
 
     /**
@@ -119,12 +138,12 @@ class CategoryController extends Controller
         }
 
         $category->available = true;
-
+        $user = User::where('role', 'warehourseguard')->first();
         try {
             if ($category->reqiestedName == null) { // create
                 $category->save();
-               // $notificationController = new NotificationController();
-              //  $notificationController->sendFCMNotification(1, "Category approved successfully", "New category ({$category->name}) added to list");
+                $notificationController = new NotificationController();
+                $notificationController->sendFCMNotification($user->id, "Category approved successfully", "New category ({$category->name}) added to list");
 
                 return response()->json(null, Response::HTTP_NO_CONTENT);
             }
@@ -133,8 +152,8 @@ class CategoryController extends Controller
             $category->reqiestedName = null;
             $category->save();
 
-         //   $notificationController = new NotificationController();
-         //   $notificationController->sendFCMNotification(1, "Category updated successfully", "Update category ({$category->name}) done");
+           $notificationController = new NotificationController();
+            $notificationController->sendFCMNotification($user->id, "Category updated successfully", "Update category ({$category->name}) done");
 
             return response()->json(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
@@ -151,13 +170,13 @@ class CategoryController extends Controller
         if (!$category) {
             return response()->json(null, Response::HTTP_NO_CONTENT);
         }
-
+        $user = User::where('role', 'warehourseguard')->first();
         try {
             $notificationController = new NotificationController();
 
             if ($category->reqiestedName == null) { // create
                 $category->delete();
-           //     $notificationController->sendFCMNotification(1, "New Category rejected", "New category ({$category->name}) has been rejected");
+                $notificationController->sendFCMNotification($user->id, "New Category rejected", "New category ({$category->name}) has been rejected");
 
                 return response()->json(null, Response::HTTP_NO_CONTENT);
             }
@@ -166,7 +185,7 @@ class CategoryController extends Controller
             $category->available = false;
             $category->save();
 
-        //    $notificationController->sendFCMNotification(1, "Update Category rejected", "Update category ({$category->name}) rejected");
+            $notificationController->sendFCMNotification($user->id, "Update Category rejected", "Update category ({$category->name}) rejected");
 
             return response()->json(null, Response::HTTP_NO_CONTENT);
         } catch (\Exception $e) {
