@@ -29,15 +29,15 @@ class BeneficiaryAddedNotification extends Notification
 
      public function via($notifiable)
      {
-           return ['database','fcm'];
+           return ['database'];
      }
 
      public function toArray($notifiable)
      {
 
          return [
-           'message' => 'New requestPending Added',
-           'Hello i am'. $this->name = $name.
+           'message' => 'New requestPending Added
+            Hello i am'. $this->name.
            'I will added the student is name:'. $this->requestPending->name
             // 'approve_url' => Http::post(('/api/admin/requests/' . $this->request->id . '/approve')),
             // 'reject_url' => url('/api/admin/requests/' . $this->request->id . '/reject'),
@@ -49,17 +49,17 @@ class BeneficiaryAddedNotification extends Notification
 
 
 
-     public function toFcm($notifiable)
-     {
-        // $factory = (new Factory)->withServiceAccount(config('services.firebase.credentials'));
-        $factory = (new Factory)->withServiceAccount('services.firebase.credentials');
-        $messaging = $factory->createMessaging();
+    //  public function toFcm($notifiable)
+    //  {
+    //     // $factory = (new Factory)->withServiceAccount(config('services.firebase.credentials'));
+    //     $factory = (new Factory)->withServiceAccount('services.firebase.credentials');
+    //     $messaging = $factory->createMessaging();
 
-         $message = CloudMessage::withTarget('token', $notifiable->fcm_token)
-             ->withNotification(FcmNotification::create('New requestPending Added', "Hello i am". $this->name = $name. ' I will added the student is name: ' . $this->requestPending->name));
+    //      $message = CloudMessage::withTarget('token', $notifiable->fcm_token)
+    //          ->withNotification(FcmNotification::create('New requestPending Added', "Hello i am". $this->name = $name. ' I will added the student is name: ' . $this->requestPending->name));
 
-         $messaging->send($message);
-     }
+    //      $messaging->send($message);
+    //  }
 
 
 
