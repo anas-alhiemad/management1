@@ -52,7 +52,7 @@ class NotificationController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
        $res= curl_exec($ch);
-       print($res);
+      
     }catch(e){
 
     }

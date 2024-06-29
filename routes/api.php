@@ -12,6 +12,7 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BeneficiaryController;
 
+use App\Http\Controllers\ItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,24 @@ use App\Http\Controllers\BeneficiaryController;
     Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
 
     Route::apiResource('categories', CategoryController::class);
+
+     #################   api items   ####################
+     Route::resource('items', ItemController::class);
+     Route::get('items', [ItemController::class, 'index']);
+Route::get('items/{item}', [ItemController::class, 'show']);
+Route::post('items', [ItemController::class, 'store']);
+Route::put('items/{item}', [ItemController::class, 'update']);
+Route::delete('items/{item}', [ItemController::class, 'destroy']);
+
+Route::get('items/type/{typeId}', [ItemController::class, 'filterByType']);
+Route::get('items/category/{categoryId}', [ItemController::class, 'filterByCategory']);
+Route::get('items/status/{status}', [ItemController::class, 'filterByStatus']);
+
+//Route::get('items/{item}/history', [ItemController::class, 'history']);
+
+//Route::get('items/export/excel', [ItemController::class, 'exportToExcel']);
+//Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
+//Route::get('items/search', [ItemController::class, 'search']);
 
        #################   api beneficiary   ####################
 
