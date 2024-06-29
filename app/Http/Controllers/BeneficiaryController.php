@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\PendingRequest;
 use App\Http\Controllers\PendingRequestController;
 use App\Notifications\BeneficiaryAddedNotification;
+use App\Services\SendNotificationsService;
+
 use Validator;
 use Auth;
 class BeneficiaryController extends Controller
@@ -143,23 +145,32 @@ class BeneficiaryController extends Controller
                 }
         }
 
-   //     $validator = array_merge($validator,$validator0,$validator1,$validator2,$validator3,$validator4);
+        $requestPending = $request->all();
 
         $user =User::where('id',Auth::id())->firstOrFail();
 
         $userName = $user->name;
 
-        $requestPending =<<<"dataRequest"
-        Hello i'm $userName,
-        I will added the student is name : $request->name
-        and email  $request->email
-        dataRequest;
+        // $requestPending =<<<"dataRequest"
+        // Hello i'm $userName,
+        // I will added the student is name : $request->name
+        // and email  $request->email
+        // dataRequest;
 
         $requestPending = PendingRequest::create(['requsetPending' => array_merge($validator->validated())]);
 
         $admin = User::where('role', 'manager')->first();
-        $admin->notify(new BeneficiaryAddedNotification($validator));
+        $admin->notify(new BeneficiaryAddedNotification($requestPending,$userName));
 
+        $service = new SendNotificationsService();
+
+        $fcmToken = $admin->fcm_token;
+        $messageData = [
+            'title' => 'Test Notification',
+            'body' => 'This is a test notification sent via FCM.',
+        ];
+
+        $response = $service->sendByFcm($fcmToken, $messageData);
 
         return response()->json(['message' => 'Request submitted successfully.','data'=>$validator->validated()]);
 

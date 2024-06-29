@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'fcm' => [
+        'credentials' => storage_path('app/json/warehouse-management-d8a87-9ef7b1d2a2ba.json'),
+        'project_id' => env('FIREBASE_PROJECT_ID'),
+    ],
+
+
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
