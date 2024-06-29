@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\PendingRequest;
+use App\Models\Beneficiary;
 use App\Http\Controllers\PendingRequestController;
 use App\Notifications\BeneficiaryAddedNotification;
 use App\Services\SendNotificationsService;
@@ -169,6 +170,25 @@ class BeneficiaryController extends Controller
         return response()->json(['message' => 'Request submitted successfully.','data'=>$validator->validated()]);
 
     }
+
+
+    public function getAllBeneficiary()
+    {
+        $beneficiary=Beneficiary::with('disbility','educationalAttainment','previoustrainingcourses','foreignlanguages','ProfessionalSkills') ->get();
+        return response()->json(['dataBeneficiary' => $beneficiary]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
