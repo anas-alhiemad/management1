@@ -61,7 +61,7 @@ use App\Http\Controllers\BeneficiaryController;
 
     Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
     Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
-             
+
     Route::apiResource('categories', CategoryController::class);
 
        #################   api beneficiary   ####################
@@ -74,7 +74,11 @@ use App\Http\Controllers\BeneficiaryController;
 
       ################ api pendingRequests #######################
 
+    Route::get('/showallrequest', [PendingRequestController::class, 'showAllRequest']);
     Route::post('/approverequest/{id}', [PendingRequestController::class, 'approveRequest']);
+    Route::post('/rejectrequest/{id}', [PendingRequestController::class, 'rejectRequest']);
+    Route::post('/updaterequest/{id}', [PendingRequestController::class, 'updateRequest']);
+    Route::post('/deleterequest/{id}', [PendingRequestController::class, 'deleteRequest']);
 
 
 // });

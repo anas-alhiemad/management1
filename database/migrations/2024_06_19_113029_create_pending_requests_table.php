@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->json('requsetPending');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('type');
             $table->timestamps();
         });
         DB::statement('ALTER TABLE pending_requests CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');

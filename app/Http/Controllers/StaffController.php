@@ -137,16 +137,26 @@ class StaffController extends Controller
     	$validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|string|min:6',
+           'fcm_token' => 'required|string',
         ]);
+
+        $validatorArray = [
+            'email' => $request->email,
+            'password' => $request->password
+        ];
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
 
-        if (! $token = auth()->attempt($validator->validated())) {
+        if (! $token = auth()->attempt($validatorArray)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
+        $User = auth()->user();
+        $User->fcm_token = $request->fcm_token;
+        $User->save();
 
         return response()->json([
             "user" => auth()->user(),

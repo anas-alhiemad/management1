@@ -11,6 +11,7 @@ class PendingRequest extends Model
     protected $fillable = [
         'requsetPending',
         'status',
+        'type'
     ];
 
     protected $casts = [

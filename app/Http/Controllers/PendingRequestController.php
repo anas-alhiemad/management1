@@ -10,6 +10,10 @@ use App\Models\EducationalAttainment;
 use App\Models\previousTrainingCourses;
 use App\Models\foreignLanguages;
 use App\Models\ProfessionalSkills;
+
+use Validator;
+use Auth;
+
 class PendingRequestController extends Controller
 {
 
@@ -18,11 +22,18 @@ class PendingRequestController extends Controller
 
     }
 
+    public function showAllRequest()
+    {
+        $request = PendingRequest::where('status','pending')
+                                    ->where('type', 'beneficiary')->get();
+
+        return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
+    }
+
+
 
     public function approveRequest($id)
     {
-
-
         $request = PendingRequest::findOrFail($id);
         $request->update(['status' => 'approved']);
         $request_data = $request ->requsetPending;
@@ -43,10 +54,10 @@ class PendingRequestController extends Controller
             'dateOfBirth' => $request_data['dateOfBirth'],
             'nots' => $request_data['nots'],
             'maritalStatus' => $request_data['maritalStatus'],
-            'thereIsDisbility' => $request_data['thereIsDisbility'], //////////
+       //     'thereIsDisbility' => $request_data['thereIsDisbility'], //////////
             'needAttendant' => $request_data['needAttendant'],
             'NumberFamilyMember' => $request_data['NumberFamilyMember'],
-            'thereIsDisbilityFamilyMember' => $request_data['thereIsDisbilityFamilyMember'], ///////////
+        //    'thereIsDisbilityFamilyMember' => $request_data['thereIsDisbilityFamilyMember'], ///////////
             'losingBreadwinner' => $request_data['losingBreadwinner'],
             'governorate' => $request_data['governorate'],
             'address' => $request_data['address'],
@@ -55,11 +66,11 @@ class PendingRequestController extends Controller
             'numberPhone' => $request_data['numberPhone'],
             'numberId' => $request_data['numberId'],
             'educationalAttainment' => $level,     ////
-            'previousTrainingCourses' => $request_data['previousTrainingCourses'],  ////
-            'foreignLanguages' => $request_data['foreignLanguages'], ////
+       //     'previousTrainingCourses' => $request_data['previousTrainingCourses'],  ////
+      //      'foreignLanguages' => $request_data['foreignLanguages'], ////
             'computerDriving' => $request_data['computerDriving'],
             'computerSkills' => $request_data['computerSkills'],
-            'professionalSkills' => $request_data['professionalSkills'],  ///
+        //    'professionalSkills' => $request_data['professionalSkills'],  ///
             'sectorPreferences' => $request_data['sectorPreferences'],
             'employment' => $request_data['employment'],
             'supportRequiredTrainingLearning' => $request_data['supportRequiredTrainingLearning'],
@@ -145,7 +156,83 @@ class PendingRequestController extends Controller
 
 
 
+    public function rejectRequest($id)
+    {
+        $request = PendingRequest::findOrFail($id);
+        $request->update(['status' => 'rejected']);
+        return response()->json(['message' => 'Request rejected.']);
+    }
 
+
+    public function updateRequest(Request $request, $id)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'serialNumber'=>'sometimes|required|integer|unique:beneficiaries,serialnumber,' . $id,
+            'date'=>'sometimes|required|date',
+            'province' => 'sometimes|required|string|between:2,100',
+            'name' => 'sometimes|required|string|between:2,50',
+            'fatherName' => 'sometimes|required|string|between:2,50',
+            'motherName' => 'sometimes|required|string|between:2,50',
+            'gender' => 'sometimes|required|string|between:2,20',
+            'dateOfBirth' => 'sometimes|required|string|between:2,100',
+            'nots' => 'sometimes|required|string|between:2,200',
+            'maritalStatus' => 'sometimes|required|string|between:2,100',
+            'thereIsDisbility' => 'sometimes|required|array',
+            'needAttendant' => 'sometimes|required|string|between:2,10',
+            'NumberFamilyMember' => 'sometimes|required|integer',
+            'thereIsDisbilityFamilyMember' => 'sometimes|required|array',
+            'losingBreadwinner' => 'sometimes|required|string|between:2,10',
+            'governorate' => 'sometimes|required|string|between:2,50',
+            'address' => 'sometimes|required|string|between:2,50',
+            'email' => 'sometimes|required|string|email|max:100',
+            'numberline' => 'sometimes|required|string|between:2,50',
+            'numberPhone' => 'sometimes|required|string|min:10',
+            'numberId' => 'sometimes|required|string|between:2,50',
+            'educationalAttainment' => 'sometimes|required|array',
+            'previousTrainingCourses' =>'sometimes|required|array',
+            'foreignLanguages' => 'sometimes|required|array',
+            'computerDriving' => 'sometimes|required|string|between:2,50',
+            'computerSkills' => 'sometimes|required|string|between:2,200',
+            'professionalSkills' =>  'sometimes|required|array',
+            'sectorPreferences' =>  'sometimes|required|string',
+            'employment' => 'sometimes|required|string|between:2,200',
+            'supportRequiredTrainingLearning' => 'sometimes|required|string|between:2,500',
+            'supportRequiredEntrepreneurship' => 'sometimes|required|string|between:2,500',
+            'careerGuidanceCounselling' => 'sometimes|required|string|between:2,500',
+            'generalNotes' => 'sometimes|required|string|between:2,500',
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+
+        try {
+
+            $pendingRequest = PendingRequest::findOrFail($id);
+
+
+            $pendingRequest->update(['requsetPending' => $validator->validated()]);
+
+            return response()->json(['message' => 'Pending request updated successfully.', 'data' => $pendingRequest]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    public function deleteRequest($id)
+
+    {
+
+        $pendingRequest = PendingRequest::where('id', $id);
+
+        $pendingRequest->delete();
+
+        return response()->json(['message' => 'Pending request deleted successfully.']);
+
+     }
 
 
 
