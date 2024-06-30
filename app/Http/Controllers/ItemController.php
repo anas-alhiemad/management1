@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\User;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
@@ -44,9 +46,13 @@ class ItemController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+     try{
+         $user = User::where('role', 'manager')->first();
+         $notificationController = new NotificationController();
+         $notificationController->sendFCMNotification($user->id,"New Item requierd permission", "A new item ($request->name) needs your approve");
+        }catch(e){}
 
         $item = Item::create($validatedData);
-
         return response()->json($item, Response::HTTP_CREATED);
     }
     /**
@@ -86,11 +92,15 @@ class ItemController extends Controller
 
         $item = Item::findOrFail($id);
         $item->update($validatedData);
-
+        try{
+            $user = User::where('role', 'manager')->first();
+            $notificationController = new NotificationController();
+            $notificationController->sendFCMNotification($user->id,"Update Item requierd permission", "item ($request->name) needs your approve");
+           }catch(e){}
         return response()->json($item, Response::HTTP_OK);
     }
 
-    /**
+    /**w
      * Remove the specified resource from storage.
      */
     public function destroy(Item $item)
@@ -102,46 +112,36 @@ class ItemController extends Controller
     
 
 
-//*
-    /**
-     * Filter items by type.
-     */
-    /*
+
+
     public function filterByType($typeId)
     {
         $items = Item::where('type_id', $typeId)->get();
         return response()->json($items, Response::HTTP_OK);
     }
 
-    /**
-     * Filter items by category.
-     
+
     public function filterByCategory($categoryId)
     {
         $items = Item::where('category_id', $categoryId)->get();
         return response()->json($items, Response::HTTP_OK);
     }
 
-    /**
-     * Filter items by status.
-     
+  
+
     public function filterByStatus($status)
     {
         $items = Item::where('status', $status)->get();
         return response()->json($items, Response::HTTP_OK);
     }
     /////// اضافي 
-    /**
- * Retrieve items that are low in stock.
- 
+
 public function lowStockItems($threshold)
 {
     $items = Item::where('quantity', '<', $threshold)->get();
     return response()->json($items, Response::HTTP_OK);
 }
 
-/**
- * Retrieve items that have not been updated recently.
 
 public function outdatedItems($days)
 {
@@ -150,42 +150,43 @@ public function outdatedItems($days)
     return response()->json($items, Response::HTTP_OK);
 }
 
-/**
- * Advanced search for items.
- 
+
 public function advancedSearch(Request $request)
 {
     $query = Item::query();
 
-    if ($request->has('name')) {
+    if ($request->filled('name')) {
         $query->where('name', 'like', '%' . $request->input('name') . '%');
     }
 
-    if ($request->has('type_id')) {
+    if ($request->filled('type_id')) {
         $query->where('type_id', $request->input('type_id'));
     }
 
-    if ($request->has('category_id')) {
+    if ($request->filled('category_id')) {
         $query->where('category_id', $request->input('category_id'));
     }
 
-    if ($request->has('status')) {
+    if ($request->filled('status')) {
         $query->where('status', $request->input('status'));
     }
+    if ($request->filled('available')) {
+        $query->where('available', $request->input('available'));
+    }
 
-    if ($request->has('min_quantity')) {
+    if ($request->filled('min_quantity')) {
         $query->where('quantity', '>=', $request->input('min_quantity'));
     }
 
-    if ($request->has('max_quantity')) {
+    if ($request->filled('max_quantity')) {
         $query->where('quantity', '<=', $request->input('max_quantity'));
     }
 
-    if ($request->has('updated_before')) {
+    if ($request->filled('updated_before')) {
         $query->where('updated_at', '<', $request->input('updated_before'));
     }
 
-    if ($request->has('updated_after')) {
+    if ($request->filled('updated_after')) {
         $query->where('updated_at', '>', $request->input('updated_after'));
     }
 
@@ -194,9 +195,6 @@ public function advancedSearch(Request $request)
     return response()->json($items, Response::HTTP_OK);
 }
 
-/**
- * Send alerts for low stock items.
- 
 
 public function sendLowStockAlerts($threshold)
 {
@@ -207,6 +205,5 @@ public function sendLowStockAlerts($threshold)
     }
 
     return response()->json(['message' => 'Alerts sent successfully'], Response::HTTP_OK);
-}
- */
-}
+
+}}
