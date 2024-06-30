@@ -11,6 +11,7 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BeneficiaryController;
+use App\Http\Controllers\DocumentsController;
 
 
 /*
@@ -68,6 +69,16 @@ use App\Http\Controllers\BeneficiaryController;
 
 
     Route::post('/addbeneficiary', [BeneficiaryController::class, 'addBeneficiary']);
+    Route::post('/updatebeneficiary/{id}', [BeneficiaryController::class, 'updateBeneficiary']);
+    Route::get('/getallbeneficiary', [BeneficiaryController::class, 'getAllBeneficiary']);
+    Route::get('/getbeneficiary/{id}', [BeneficiaryController::class, 'getBeneficiary']);
+    Route::get('/searchbeneficiary/{search}', [BeneficiaryController::class, 'searchBeneficiary']);
+    Route::post('/deletebeneficiary/{id}', [BeneficiaryController::class, 'deleteBeneficiary']);
+    
+    Route::post('/adddocuments/{id}', [DocumentsController::class, 'addDocuments']);
+    Route::get('/showdocuments/{id}', [DocumentsController::class, 'showDocuments']);
+    Route::post('/updatedocuments/{id}', [DocumentsController::class, 'updateDocuments']);
+    Route::post('/destroydocuments/{id}', [DocumentsController::class, 'destroyDocuments']);
 
 
 

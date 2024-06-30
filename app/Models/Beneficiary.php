@@ -9,6 +9,8 @@ use App\Models\EducationalAttainment;
 use App\Models\previousTrainingCourses;
 use App\Models\foreignLanguages;
 use App\Models\ProfessionalSkills;
+use App\Models\Document;
+
 class Beneficiary extends Model
 {
     use HasFactory;
@@ -77,6 +79,10 @@ class Beneficiary extends Model
         }
         public function ProfessionalSkills() {
             return $this->hasMany(ProfessionalSkills::class,'beneficiary_id');
+        }
+
+        public function document() {
+            return $this->hasMany(Document::class,'beneficiary_id');
         }
 
 }
