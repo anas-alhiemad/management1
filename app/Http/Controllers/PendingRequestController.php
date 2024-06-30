@@ -35,7 +35,7 @@ class PendingRequestController extends Controller
     public function approveRequest($id)
     {
         $request = PendingRequest::findOrFail($id);
-        $request->update(['status' => 'approved']);
+
         $request_data = $request ->requsetPending;
 
         $educationalAttainmentArraylevel = $request_data['educationalAttainment'];
@@ -150,7 +150,7 @@ class PendingRequestController extends Controller
                 ]);
             }
         }
-
+        $request->update(['status' => 'approved']);
         return response()->json(['message' => 'Request approved and student added.']);
     }
 
@@ -168,39 +168,39 @@ class PendingRequestController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'serialNumber'=>'sometimes|required|integer|unique:beneficiaries,serialnumber,' . $id,
-            'date'=>'sometimes|required|date',
-            'province' => 'sometimes|required|string|between:2,100',
-            'name' => 'sometimes|required|string|between:2,50',
-            'fatherName' => 'sometimes|required|string|between:2,50',
-            'motherName' => 'sometimes|required|string|between:2,50',
-            'gender' => 'sometimes|required|string|between:2,20',
-            'dateOfBirth' => 'sometimes|required|string|between:2,100',
-            'nots' => 'sometimes|required|string|between:2,200',
-            'maritalStatus' => 'sometimes|required|string|between:2,100',
-            'thereIsDisbility' => 'sometimes|required|array',
-            'needAttendant' => 'sometimes|required|string|between:2,10',
-            'NumberFamilyMember' => 'sometimes|required|integer',
-            'thereIsDisbilityFamilyMember' => 'sometimes|required|array',
-            'losingBreadwinner' => 'sometimes|required|string|between:2,10',
-            'governorate' => 'sometimes|required|string|between:2,50',
-            'address' => 'sometimes|required|string|between:2,50',
-            'email' => 'sometimes|required|string|email|max:100',
-            'numberline' => 'sometimes|required|string|between:2,50',
-            'numberPhone' => 'sometimes|required|string|min:10',
-            'numberId' => 'sometimes|required|string|between:2,50',
-            'educationalAttainment' => 'sometimes|required|array',
-            'previousTrainingCourses' =>'sometimes|required|array',
-            'foreignLanguages' => 'sometimes|required|array',
-            'computerDriving' => 'sometimes|required|string|between:2,50',
-            'computerSkills' => 'sometimes|required|string|between:2,200',
-            'professionalSkills' =>  'sometimes|required|array',
-            'sectorPreferences' =>  'sometimes|required|string',
-            'employment' => 'sometimes|required|string|between:2,200',
-            'supportRequiredTrainingLearning' => 'sometimes|required|string|between:2,500',
-            'supportRequiredEntrepreneurship' => 'sometimes|required|string|between:2,500',
-            'careerGuidanceCounselling' => 'sometimes|required|string|between:2,500',
-            'generalNotes' => 'sometimes|required|string|between:2,500',
+            'serialNumber'=>'required|integer|unique:beneficiaries,serialnumber,' . $id,
+            'date'=>'required|date',
+            'province' => 'required|string|between:2,100',
+            'name' => 'required|string|between:2,50',
+            'fatherName' => 'required|string|between:2,50',
+            'motherName' => 'required|string|between:2,50',
+            'gender' => 'required|string|between:2,20',
+            'dateOfBirth' => 'required|string|between:2,100',
+            'nots' => 'required|string|between:2,200',
+            'maritalStatus' => 'required|string|between:2,100',
+            'thereIsDisbility' => 'required|array',
+            'needAttendant' => 'required|string|between:2,10',
+            'NumberFamilyMember' => 'required|integer',
+            'thereIsDisbilityFamilyMember' => 'required|array',
+            'losingBreadwinner' => 'required|string|between:2,10',
+            'governorate' => 'required|string|between:2,50',
+            'address' => 'required|string|between:2,50',
+            'email' => 'required|string|email|max:100',
+            'numberline' => 'required|string|between:2,50',
+            'numberPhone' => 'required|string|min:10',
+            'numberId' => 'required|string|between:2,50',
+            'educationalAttainment' => 'required|array',
+            'previousTrainingCourses' =>'required|array',
+            'foreignLanguages' => 'required|array',
+            'computerDriving' => 'required|string|between:2,50',
+            'computerSkills' => 'required|string|between:2,200',
+            'professionalSkills' =>  'required|array',
+            'sectorPreferences' =>  'required|string',
+            'employment' => 'required|string|between:2,200',
+            'supportRequiredTrainingLearning' => 'required|string|between:2,500',
+            'supportRequiredEntrepreneurship' => 'required|string|between:2,500',
+            'careerGuidanceCounselling' => 'required|string|between:2,500',
+            'generalNotes' => 'required|string|between:2,500',
         ]);
 
 
