@@ -12,6 +12,7 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\DocumentsController;
+use App\Http\Controllers\CourseController;
 
 use App\Http\Controllers\ItemController;
 
@@ -86,6 +87,7 @@ use App\Http\Controllers\ItemController;
 //Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
 //Route::get('items/search', [ItemController::class, 'search']);
 
+
        #################   api beneficiary   ####################
 
 
@@ -95,7 +97,7 @@ use App\Http\Controllers\ItemController;
     Route::get('/getbeneficiary/{id}', [BeneficiaryController::class, 'getBeneficiary']);
     Route::get('/searchbeneficiary/{search}', [BeneficiaryController::class, 'searchBeneficiary']);
     Route::post('/deletebeneficiary/{id}', [BeneficiaryController::class, 'deleteBeneficiary']);
-                     ### 
+                     ###
     Route::post('/adddocuments/{id}', [DocumentsController::class, 'addDocuments']);
     Route::get('/showdocuments/{id}', [DocumentsController::class, 'showDocuments']);
     Route::post('/updatedocuments/{id}', [DocumentsController::class, 'updateDocuments']);
@@ -106,11 +108,22 @@ use App\Http\Controllers\ItemController;
 
       ################ api pendingRequests #######################
 
-    Route::get('/showallrequest', [PendingRequestController::class, 'showAllRequest']);
+    Route::get('/showallrequestbeneficiary', [PendingRequestController::class, 'showAllRequestBeneficiary']);
+    Route::get('/showallrequestCourses', [PendingRequestController::class, 'showAllRequestCourses']);
     Route::post('/approverequest/{id}', [PendingRequestController::class, 'approveRequest']);
     Route::post('/rejectrequest/{id}', [PendingRequestController::class, 'rejectRequest']);
     Route::post('/updaterequest/{id}', [PendingRequestController::class, 'updateRequest']);
     Route::post('/deleterequest/{id}', [PendingRequestController::class, 'deleteRequest']);
+
+
+      ################ api courses #######################
+
+    Route::post('/addcourse', [CourseController::class, 'addCourse']);
+    Route::get('/showallcourses', [CourseController::class, 'showAllCourses']);
+    Route::post('/showcourse/{id}', [CourseController::class, 'showCourse']);
+    Route::post('/updatecourse/{id}', [CourseController::class, 'updateCourse']);
+    Route::post('/destroycourse/{id}', [CourseController::class, 'destroyCourse']);
+    Route::post('/updatestatus/{id}', [CourseController::class, 'updateStatus']);
 
 
 // });
