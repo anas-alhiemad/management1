@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->default('null');
             $table->string('description')->default('null');
             $table->integer('quantity')->default(0);
-            $table->boolean('status')->default(true);
+            $table->boolean('status')->default(true);// if expierd_date pass the Item 
             $table->boolean('available')->default(false); // if manager accept the Item requiest
             $table->date('expierd_date')->nullable();
     
