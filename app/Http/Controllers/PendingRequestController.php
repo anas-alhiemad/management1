@@ -10,6 +10,7 @@ use App\Models\EducationalAttainment;
 use App\Models\previousTrainingCourses;
 use App\Models\foreignLanguages;
 use App\Models\ProfessionalSkills;
+use App\Models\Course;
 
 use Validator;
 use Auth;
@@ -22,10 +23,17 @@ class PendingRequestController extends Controller
 
     }
 
-    public function showAllRequest()
+    public function showAllRequestBeneficiary()
     {
         $request = PendingRequest::where('status','pending')
                                     ->where('type', 'beneficiary')->get();
+
+        return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
+    }
+    public function showAllRequestCourses()
+    {
+        $request = PendingRequest::where('status','pending')
+                                    ->where('type', 'course')->get();
 
         return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
     }
@@ -35,9 +43,10 @@ class PendingRequestController extends Controller
     public function approveRequest($id)
     {
         $request = PendingRequest::findOrFail($id);
-
+        $type = $request ->type;
         $request_data = $request ->requsetPending;
 
+        if($type == 'beneficiary'){
         $educationalAttainmentArraylevel = $request_data['educationalAttainment'];
         foreach ($educationalAttainmentArraylevel as $attainment) {
             $level = $attainment['educationalAttainmentLevel'];
@@ -155,6 +164,24 @@ class PendingRequestController extends Controller
     }
 
 
+    elseif($type == 'course')
+    {
+        $course = Course::create([
+        'nameCourse' => $request_data['nameCourse'],
+        'coursePeriod' => $request_data['coursePeriod'],
+        'type' => $request_data['type'],
+        'courseStatus' => $request_data['courseStatus'],
+        'specialty' => $request_data['specialty'],
+        'description' => $request_data['description'],]);
+
+        $request->update(['status' => 'approved']);
+        return response()->json(['message' => 'Request approved and course added.']);
+
+    }
+
+    }
+
+
 
     public function rejectRequest($id)
     {
@@ -167,6 +194,10 @@ class PendingRequestController extends Controller
     public function updateRequest(Request $request, $id)
     {
 
+        $pendingRequest = PendingRequest::where('status','pending')->findOrFail($id);
+        $type = $request ->type;
+        if($type = 'beneficiary')
+        {
         $validator = Validator::make($request->all(), [
             'serialNumber'=>'required|integer|unique:beneficiaries,serialnumber,' . $id,
             'date'=>'required|date',
@@ -203,22 +234,38 @@ class PendingRequestController extends Controller
             'generalNotes' => 'required|string|between:2,500',
         ]);
 
-
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        try {
-
-            $pendingRequest = PendingRequest::findOrFail($id);
-
-
             $pendingRequest->update(['requsetPending' => $validator->validated()]);
 
-            return response()->json(['message' => 'Pending request updated successfully.', 'data' => $pendingRequest]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'An error occurred: ' . $e->getMessage()], 500);
+            return response()->json( $pendingRequest);
         }
+
+        elseif($type = 'course')
+        {
+            $validator = validator::make($request->all(),[
+                'nameCourse'=>'required|string',
+                'coursePeriod'=>'required|string',
+                'type' => 'required|string',
+                'courseStatus' => 'required|string',
+                'specialty' => 'required|string',
+                'description' => 'required|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            }
+
+                $pendingRequest->update(['requsetPending' => $validator->validated()]);
+
+                return response()->json(['message' => 'Pending request updated successfully.', 'data' => $pendingRequest]);
+        }
+
+
+
+
+
     }
 
 
