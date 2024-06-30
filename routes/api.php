@@ -74,7 +74,7 @@ use App\Http\Controllers\DocumentsController;
     Route::get('/getbeneficiary/{id}', [BeneficiaryController::class, 'getBeneficiary']);
     Route::get('/searchbeneficiary/{search}', [BeneficiaryController::class, 'searchBeneficiary']);
     Route::post('/deletebeneficiary/{id}', [BeneficiaryController::class, 'deleteBeneficiary']);
-    
+                     ### 
     Route::post('/adddocuments/{id}', [DocumentsController::class, 'addDocuments']);
     Route::get('/showdocuments/{id}', [DocumentsController::class, 'showDocuments']);
     Route::post('/updatedocuments/{id}', [DocumentsController::class, 'updateDocuments']);
