@@ -109,7 +109,7 @@ class CategoryController extends Controller
         ]);
         
         $category->available= false;
-        $category->reqiestedName= request->name;;
+        $category->reqiestedName= $request->name;;
         $category->save();
 
         $notificationController = new NotificationController();

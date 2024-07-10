@@ -58,14 +58,17 @@ use App\Http\Controllers\ItemController;
     Route::apiResource('types', TypeController::class);
 
              ########################     api Category ########################
+    Route::middleware(['jwt.auth', 'warehouseguard'])->group(function () {
+        Route::post('categories/{category}/accept', [CategoryController::class, 'acceptRequest']);
+        Route::post('categories/{category}/reject', [CategoryController::class, 'rejectRequest']);
 
-    Route::post('categories/{category}/accept', [CategoryController::class, 'acceptRequest']);
-    Route::post('categories/{category}/reject', [CategoryController::class, 'rejectRequest']);
+        Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
+        Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
 
-    Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
-    Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
+        Route::apiResource('categories', CategoryController::class);
 
-    Route::apiResource('categories', CategoryController::class);
+    });
+
 
      #################   api items   ####################
 
@@ -109,6 +112,7 @@ use App\Http\Controllers\ItemController;
       ################ api pendingRequests #######################
 
     Route::get('/showallrequestbeneficiary', [PendingRequestController::class, 'showAllRequestBeneficiary']);
+    Route::get('/showAllRequestItems', [PendingRequestController::class, 'showAllRequestItems']);
     Route::get('/showallrequestCourses', [PendingRequestController::class, 'showAllRequestCourses']);
     Route::post('/approverequest/{id}', [PendingRequestController::class, 'approveRequest']);
     Route::post('/rejectrequest/{id}', [PendingRequestController::class, 'rejectRequest']);

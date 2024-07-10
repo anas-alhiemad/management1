@@ -11,6 +11,7 @@ use App\Models\previousTrainingCourses;
 use App\Models\foreignLanguages;
 use App\Models\ProfessionalSkills;
 use App\Models\Course;
+use App\Models\Item;
 
 use Validator;
 use Auth;
@@ -37,6 +38,15 @@ class PendingRequestController extends Controller
 
         return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
     }
+
+    public function showAllRequestItems()
+    {
+        $request = PendingRequest::where('status','pending')
+                                    ->where('type', 'item')->get();
+
+        return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
+    }
+
 
 
 
@@ -177,6 +187,25 @@ class PendingRequestController extends Controller
         $request->update(['status' => 'approved']);
         return response()->json(['message' => 'Request approved and course added.']);
 
+    } elseif($type == 'item')
+    {
+        $pendingRequest = json_decode($request_data, true);
+        if (isset($pendingRequest['id']) && $pendingRequest['id']) {
+        $item = Item::find($pendingRequest['id']);
+        if ($item) {
+            $item->update($pendingRequest);
+        } else {
+            Item::create($pendingRequest);
+        }
+        $request->update(['status' => 'approved']);
+        return response()->json(['message' => 'Request approved and item added.']);
+
+    }else{
+        Item::create($pendingRequest);
+
+    $request->update(['status' => 'approved']);
+    return response()->json(['message' => 'Request approved and item added.']);
+    }
     }
 
     }

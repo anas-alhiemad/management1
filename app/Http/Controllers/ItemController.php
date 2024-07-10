@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\User;
+use App\Models\PendingRequest;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Validator;
 class ItemController extends Controller
 {
     /**
@@ -31,11 +33,11 @@ class ItemController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-   
+
     public function store(Request $request)
     {
         try {
-            $validatedData = $request->validate([
+            $validator =Validator::make($request->all(),[
                 'name' => 'required|string|max:255',
                 'expired_date' => 'required|date',
                 'quantity' => 'required|integer',
@@ -43,6 +45,9 @@ class ItemController extends Controller
                 'type_id' => 'required|integer|exists:types,id',
                 'category_id' => 'required|integer|exists:categories,id',
             ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -52,8 +57,11 @@ class ItemController extends Controller
          $notificationController->sendFCMNotification($user->id,"New Item requierd permission", "A new item ($request->name) needs your approve");
         }catch(e){}
 
-        $item = Item::create($validatedData);
-        return response()->json($item, Response::HTTP_CREATED);
+        $requestPending = PendingRequest::create(['requsetPending' =>json_encode( $validator->validated()),
+        'type' =>'item',]);
+
+
+          return response()->json(['message' =>  'Request submitted successfully.']);
     }
     /**
      * Display the specified resource.
@@ -91,7 +99,11 @@ class ItemController extends Controller
         }
 
         $item = Item::findOrFail($id);
-        $item->update($validatedData);
+        $requestPendingData = $validatedData;
+        $requestPendingData['id'] = $item->id;
+        $requestPending = PendingRequest::create(['requsetPending' =>json_encode($requestPendingData),
+        'type' =>'item',]);
+
         try{
             $user = User::where('role', 'manager')->first();
             $notificationController = new NotificationController();
@@ -109,7 +121,7 @@ class ItemController extends Controller
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
-    
+
 
 
 
@@ -127,14 +139,14 @@ class ItemController extends Controller
         return response()->json($items, Response::HTTP_OK);
     }
 
-  
+
 
     public function filterByStatus($status)
     {
         $items = Item::where('status', $status)->get();
         return response()->json($items, Response::HTTP_OK);
     }
-    /////// اضافي 
+    /////// اضافي
 
 public function lowStockItems($threshold)
 {
