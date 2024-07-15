@@ -8,6 +8,7 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\User;
+use App\Models\PendingRequest;
 use Illuminate\Http\Response;
 
 class CategoryController extends Controller
@@ -59,23 +60,27 @@ class CategoryController extends Controller
         if($request->parent_id!=null){
             $parent= Category::find($request->parent_id);
             if($parent){
-             $category = Category::create($validated);
+             
              $user = User::where('role', 'manager')->first();
      $notificationController = new NotificationController();
              $notificationController->sendFCMNotification($user->id,"New Category requierd permission", "A new category ($request->name) needs your approve");
+             $requestPending = PendingRequest::create(['requsetPending' =>json_encode( $validated),
+             'type' =>'category',]);
      
-             return response()->json($category, Response::HTTP_CREATED);
+             return response()->json(['message' =>  'Request submitted successfully.']);
             }
              else{
                  return response()->json('parernt not exit', Response::HTTP_NOT_FOUND);
              }
         }else{
-            $category = Category::create($validated);
+         
             $user = User::where('role', 'manager')->first();
-    $notificationController = new NotificationController();
+            $notificationController = new NotificationController();
             $notificationController->sendFCMNotification($user->id,"New Category requierd permission", "A new category ($request->name) needs your approve");
+            $requestPending = PendingRequest::create(['requsetPending' =>json_encode( $validated),
+            'type' =>'category',]);
     
-            return response()->json($category, Response::HTTP_CREATED);
+            return response()->json(['message' =>  'Request submitted successfully.']);
         }
 
 
@@ -107,15 +112,17 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'parent_id' => 'nullable|exists:categories,id',
         ]);
-        
-        $category->available= false;
-        $category->reqiestedName= $request->name;;
-        $category->save();
+        $requestPendingData = $validated;
+        $requestPendingData['id'] = $category->id;
+        PendingRequest::create(['requsetPending' =>json_encode($requestPendingData),
+        'type' =>'category',]);
 
+    try{    $user = User::where('role', 'manager')->first();
+     
         $notificationController = new NotificationController();
-        $notificationController->sendFCMNotification('admin_user_id',"updated Category requierd permission", "update category ($request->name) needs your approve");
-
-        return response()->json($category, Response::HTTP_OK);
+        $notificationController->sendFCMNotification( $user->id,"updated Category requierd permission", "update category ($request->name) needs your approve");
+}catch(e){}
+        return response()->json(['message' =>  'Request submitted successfully.']);
     }
 
     /**

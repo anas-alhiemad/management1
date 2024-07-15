@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('name')->default('null');
             $table->string('description')->default('null');
             $table->integer('quantity')->default(0);
-            $table->boolean('status')->default(true);// if expierd_date pass the Item
+            $table->integer('minimum_quantity')->default(1);
+            $table->boolean('status')->default(true);// if expired_date pass the Item
+            $table->boolean('available')->default(false)->nullable();// if manager accept the Item
             $table->date('expired_date')->nullable();
             $table->foreignId('type_id')->constrained('types'); // Foreign key to types table
             $table->foreignId('category_id')->constrained('categories'); // Foreign key to categories table

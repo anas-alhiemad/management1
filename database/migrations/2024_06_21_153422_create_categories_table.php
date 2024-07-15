@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id(); 
             $table->string('name');
-            $table->string('reqiestedName')->nullable();
             $table->boolean('available')->default(false); // if manager accept the category requiest
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('cascade');
             $table->timestamps();
