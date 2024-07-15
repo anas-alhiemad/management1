@@ -10,6 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Validator;
+use Maatwebsite\Excel\Facades\Excel; // تأكد من استيراد الفئة هنا
+use App\Exports\ItemsExport;
+use App\Imports\ItemsImport;
+
 class ItemController extends Controller
 {
     /**
@@ -163,6 +167,30 @@ public function outdatedItems($days)
 }
 
 
+ /**
+     * Export items to Excel.
+     */
+    
+     public function exportToExcel()
+     {
+         return Excel::download(new ItemsExport, 'items.xlsx');
+     }
+ 
+     public function importFromExcel(Request $request)
+     {
+        
+         $file = $request->file('excel_file');
+         Excel::import(new ItemsImport, $file);
+ 
+         return response()->json(null, Response::HTTP_CREATED);
+     }
+ ///////////////////////////////////////
+ 
+     /**
+      * Import items from Excel.
+      */
+    
+ 
 public function advancedSearch(Request $request)
 {
     $query = Item::query();
@@ -207,7 +235,7 @@ public function advancedSearch(Request $request)
     return response()->json($items, Response::HTTP_OK);
 }
 
-
+/*
 public function sendLowStockAlerts($threshold)
 {
     $items = Item::where('quantity', '<', $threshold)->get();
@@ -219,3 +247,21 @@ public function sendLowStockAlerts($threshold)
     return response()->json(['message' => 'Alerts sent successfully'], Response::HTTP_OK);
 
 }}
+}*/
+/*
+    public function checkItemQuantity()
+    {
+        $items = Item::all();
+
+        foreach ($items as $item) {
+            if ($item->quantity <= $item->minimum_quantity) {
+                // إرسال إشعار أو تنبيه هنا
+                // يمكنك استخدام نظام الإشعارات في Laravel لإرسال إشعارات إلى المستخدمين أو الإداريين المعنيين
+                Notification::route('mail', 'admin@example.com')
+                    ->notify(new \App\Notifications\ItemLowQuantityNotification($item));
+            }
+        }
+    }
+*/
+
+}

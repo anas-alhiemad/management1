@@ -69,11 +69,19 @@ use App\Http\Controllers\ItemController;
 
     });
 
+    Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
+    Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
+   
+    Route::apiResource('categories', CategoryController::class);
 
      #################   api items   ####################
-
+     Route::get('items/export/excel', [ItemController::class, 'exportToExcel']);
+     
+     Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
      Route::post('/items/advancedSearch', [ItemController::class, 'advancedSearch']);
      Route::resource('items', ItemController::class);
+     
+
  //    Route::get('items', [ItemController::class, 'index']);
 // Route::get('items/{item}', [ItemController::class, 'show']);
 // Route::post('items', [ItemController::class, 'store']);
@@ -113,6 +121,7 @@ use App\Http\Controllers\ItemController;
 
     Route::get('/showallrequestbeneficiary', [PendingRequestController::class, 'showAllRequestBeneficiary']);
     Route::get('/showAllRequestItems', [PendingRequestController::class, 'showAllRequestItems']);
+    Route::get('/showAllRequestcategory', [PendingRequestController::class, 'showAllRequestCategory']);
     Route::get('/showallrequestCourses', [PendingRequestController::class, 'showAllRequestCourses']);
     Route::post('/approverequest/{id}', [PendingRequestController::class, 'approveRequest']);
     Route::post('/rejectrequest/{id}', [PendingRequestController::class, 'rejectRequest']);

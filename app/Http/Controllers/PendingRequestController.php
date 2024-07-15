@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Beneficiary;
 use App\Models\PendingRequest;
@@ -46,6 +47,15 @@ class PendingRequestController extends Controller
 
         return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
     }
+
+    public function showAllRequestCategory()
+    {
+        $request = PendingRequest::where('status','pending')
+                                    ->where('type', 'category')->get();
+
+        return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
+    }
+
 
 
 
@@ -202,6 +212,25 @@ class PendingRequestController extends Controller
 
     }else{
         Item::create($pendingRequest);
+
+    $request->update(['status' => 'approved']);
+    return response()->json(['message' => 'Request approved and item added.']);
+    }
+    }elseif($type == 'category')
+    {
+        $pendingRequest = json_decode($request_data, true);
+        if (isset($pendingRequest['id']) && $pendingRequest['id']) {
+        $item = Category::find($pendingRequest['id']);
+        if ($item) {
+            $item->update($pendingRequest);
+        } else {
+            Category::create($pendingRequest);
+        }
+        $request->update(['status' => 'approved']);
+        return response()->json(['message' => 'Request approved and item added.']);
+
+    }else{
+        Category::create($pendingRequest);
 
     $request->update(['status' => 'approved']);
     return response()->json(['message' => 'Request approved and item added.']);
