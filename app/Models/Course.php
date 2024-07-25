@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\BeneficiaryCourse;
 class Course extends Model
 {
     use HasFactory;
@@ -17,4 +17,9 @@ class Course extends Model
         'specialty',
         'description',
     ];
+
+    public function beneficiaryCourses() {
+        return $this->hasMany(BeneficiaryCourse::class,'course_id');
+    }
+
 }

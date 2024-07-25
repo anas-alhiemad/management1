@@ -12,6 +12,7 @@ use App\Models\previousTrainingCourses;
 use App\Models\foreignLanguages;
 use App\Models\ProfessionalSkills;
 use App\Models\Course;
+use App\Models\Trainer;
 use App\Models\Item;
 
 use Validator;
@@ -197,7 +198,23 @@ class PendingRequestController extends Controller
         $request->update(['status' => 'approved']);
         return response()->json(['message' => 'Request approved and course added.']);
 
-    } elseif($type == 'item')
+    }
+
+    elseif($type == 'trainer')
+    {
+        $trainer = Trainer::create([
+        'name' => $request_data['name'],
+        'email' => $request_data['email'],
+        'phone' => $request_data['phone'],
+        'address' => $request_data['address'],
+        'specialty' => $request_data['specialty'],
+        'description' => $request_data['description'],]);
+
+        $request->update(['status' => 'approved']);
+        return response()->json(['message' => 'Request approved and trainer added.']);
+
+    }
+    elseif($type == 'item')
     {
         $pendingRequest = json_decode($request_data, true);
         if (isset($pendingRequest['id']) && $pendingRequest['id']) {

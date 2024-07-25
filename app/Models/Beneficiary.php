@@ -10,6 +10,7 @@ use App\Models\previousTrainingCourses;
 use App\Models\foreignLanguages;
 use App\Models\ProfessionalSkills;
 use App\Models\Document;
+use App\Models\BeneficiaryCourse;
 
 class Beneficiary extends Model
 {
@@ -83,6 +84,9 @@ class Beneficiary extends Model
 
         public function document() {
             return $this->hasMany(Document::class,'beneficiary_id');
+        }
+        public function beneficiaryCourses() {
+            return $this->hasMany(BeneficiaryCourse::class,'beneficiary_id');
         }
 
 }

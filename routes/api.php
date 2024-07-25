@@ -13,6 +13,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\TrainerController;
 
 use App\Http\Controllers\ItemController;
 
@@ -53,34 +54,37 @@ use App\Http\Controllers\ItemController;
     Route::post('/updatestaff/{id}', [StaffController::class, 'updateStaff']);
     Route::post('/destroystaff/{id}', [StaffController::class, 'destroyStaff']);
     Route::post('/loginstaff', [StaffController::class, 'loginStaff']);
+    Route::get('/searchstaff/{search}', [BeneficiaryController::class, 'searchStaff']);
+
+
 
          ########################     api Type ########################
     Route::apiResource('types', TypeController::class);
 
              ########################     api Category ########################
     Route::middleware(['jwt.auth', 'warehouseguard'])->group(function () {
-        Route::post('categories/{category}/accept', [CategoryController::class, 'acceptRequest']);
-        Route::post('categories/{category}/reject', [CategoryController::class, 'rejectRequest']);
+    Route::post('categories/{category}/accept', [CategoryController::class, 'acceptRequest']);
+    Route::post('categories/{category}/reject', [CategoryController::class, 'rejectRequest']);
 
-        Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
-        Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
+    Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
+    Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
 
-        Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('categories', CategoryController::class);
 
     });
 
     Route::get('categories/available', [CategoryController::class, 'indexAvailable']);
     Route::get('categories/unavailable', [CategoryController::class, 'indexUnAvailable']);
-   
+
     Route::apiResource('categories', CategoryController::class);
 
      #################   api items   ####################
      Route::get('items/export/excel', [ItemController::class, 'exportToExcel']);
-     
+
      Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
      Route::post('/items/advancedSearch', [ItemController::class, 'advancedSearch']);
      Route::resource('items', ItemController::class);
-     
+
 
  //    Route::get('items', [ItemController::class, 'index']);
 // Route::get('items/{item}', [ItemController::class, 'show']);
@@ -137,6 +141,16 @@ use App\Http\Controllers\ItemController;
     Route::post('/updatecourse/{id}', [CourseController::class, 'updateCourse']);
     Route::post('/destroycourse/{id}', [CourseController::class, 'destroyCourse']);
     Route::post('/updatestatus/{id}', [CourseController::class, 'updateStatus']);
+    Route::get('/searchcourse/{search}', [CourseController::class, 'searchCourse']); //1
+
+      ################ api Trainer #######################
+
+    Route::post('/addtrainer', [TrainerController::class, 'addTrainer']);
+    Route::get('/showalltrainer', [TrainerController::class, 'showAllTrainer']);
+    Route::post('/showtrainer/{id}', [TrainerController::class, 'showTrainer']);
+  //  Route::post('/updatecourse/{id}', [TrainerController::class, 'updateCourse']); searchTrainer
+    Route::post('/destroytrainer/{id}', [TrainerController::class, 'destroyTrainer']);
+    Route::get('/searchtrainer/{search}', [TrainerController::class, 'searchTrainer']);
 
 
 // });

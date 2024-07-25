@@ -120,6 +120,36 @@ class StaffController extends Controller
 
 
 
+    public function searchStaff($request)
+    {
+        $query = $request;
+
+        if (!$query) {
+            return response()->json(['message' => 'Query parameter is required.'], 400);
+        }
+
+        $columns = [
+            'name',
+            'password',
+            'role',
+            'number',
+        ];
+
+
+        $beneficiaries = User::where(function($q) use ($columns, $query) {
+            foreach ($columns as $column) {
+                $q->orWhereRaw("LOWER($column) LIKE ?", ['%' . strtolower($query) . '%']);
+            }
+        })->get();
+
+
+        if ($beneficiaries->isEmpty()) {
+            return response()->json(['message' => 'No beneficiaries found with the provided query.'], 404);
+        }
+
+        return response()->json($beneficiaries);
+    }
+
     public function destroyStaff($id)
     {
         $staff=User::firstWhere('id',$id);
@@ -127,8 +157,6 @@ class StaffController extends Controller
         $staff->delete();
         return response()->json(['message' => 'successfully destroyStaff'],200);
     }
-
-
 
 
 
