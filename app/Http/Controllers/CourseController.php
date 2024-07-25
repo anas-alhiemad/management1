@@ -106,4 +106,37 @@ class CourseController extends Controller
     }
 
 
+
+    public function searchCourse($request)
+    {
+        $query = $request;
+
+        if (!$query) {
+            return response()->json(['message' => 'Query parameter is required.'], 400);
+        }
+
+        $columns = [
+            'nameCourse',
+            'coursePeriod',
+            'type',
+            'courseStatus',
+            'specialty',
+            'description',
+        ];
+
+
+        $beneficiaries = Course::where(function($q) use ($columns, $query) {
+            foreach ($columns as $column) {
+                $q->orWhereRaw("LOWER($column) LIKE ?", ['%' . strtolower($query) . '%']);
+            }
+        })->get();
+
+
+        if ($beneficiaries->isEmpty()) {
+            return response()->json(['message' => 'No beneficiaries found with the provided query.'], 404);
+        }
+
+        return response()->json($beneficiaries);
+    }
+
 }

@@ -192,7 +192,7 @@ class BeneficiaryController extends Controller
 
 
     public function updateBeneficiary(Request $request, $id)
-{
+    {
 
 
     $validator = Validator::make($request->all(), [
@@ -286,179 +286,217 @@ class BeneficiaryController extends Controller
 }
 
 
-private function updateDisabilities($request_data, $beneficiary)
-{
+    private function updateDisabilities($request_data, $beneficiary)
+    {
 
-    Disbility::where('beneficiary_id', $beneficiary->id)->delete();
+        Disbility::where('beneficiary_id', $beneficiary->id)->delete();
 
 
-    $thereIsDisbilityArray = $request_data['thereIsDisbility'];
-    if($thereIsDisbilityArray != null){
-        foreach ($thereIsDisbilityArray as $disbility) {
-            Disbility::create([
-                'beneficiary_id' => $beneficiary->id,
-                'nameDisbility' => $disbility['nameDisbility'],
-                'rateDisbility' => $disbility['rateDisbility'],
-            ]);
+        $thereIsDisbilityArray = $request_data['thereIsDisbility'];
+        if($thereIsDisbilityArray != null){
+            foreach ($thereIsDisbilityArray as $disbility) {
+                Disbility::create([
+                    'beneficiary_id' => $beneficiary->id,
+                    'nameDisbility' => $disbility['nameDisbility'],
+                    'rateDisbility' => $disbility['rateDisbility'],
+                ]);
+            }
+        }
+
+        $thereIsDisbilityFamilyMemberArray = $request_data['thereIsDisbilityFamilyMember'];
+        if($thereIsDisbilityFamilyMemberArray != null){
+            foreach ($thereIsDisbilityFamilyMemberArray as $disbility) {
+                Disbility::create([
+                    'beneficiary_id' => $beneficiary->id,
+                    'nameDisbility' => $disbility['nameDisbility'],
+                ]);
+            }
         }
     }
 
-    $thereIsDisbilityFamilyMemberArray = $request_data['thereIsDisbilityFamilyMember'];
-    if($thereIsDisbilityFamilyMemberArray != null){
-        foreach ($thereIsDisbilityFamilyMemberArray as $disbility) {
-            Disbility::create([
-                'beneficiary_id' => $beneficiary->id,
-                'nameDisbility' => $disbility['nameDisbility'],
-            ]);
-        }
-    }
-}
 
+    private function updateEducationalAttainments($request_data, $beneficiary)
+    {
 
-private function updateEducationalAttainments($request_data, $beneficiary)
-{
+        EducationalAttainment::where('beneficiary_id', $beneficiary->id)->delete();
 
-    EducationalAttainment::where('beneficiary_id', $beneficiary->id)->delete();
-
-    $educationalAttainmentArray = $request_data['educationalAttainment'];
-    if($educationalAttainmentArray != null){
-        foreach ($educationalAttainmentArray as $educationalAttainment) {
-            EducationalAttainment::create([
-                'beneficiary_id' => $beneficiary->id,
-                'specialization' => $educationalAttainment['specialization'],
-                'certificate' => $educationalAttainment['certificate'],
-                'graduationRate' => $educationalAttainment['graduationRate'],
-                'academicYear' => $educationalAttainment['academicYear'],
-            ]);
-        }
-    }
-}
-
-
-
-private function updatePreviousTrainingCourses($request_data, $beneficiary)
-{
-
-    previousTrainingCourses::where('beneficiary_id', $beneficiary->id)->delete();
-
-    $previousTrainingCoursesArray = $request_data['previousTrainingCourses'];
-    if($previousTrainingCoursesArray != null){
-        foreach ($previousTrainingCoursesArray as $previousTrainingCourses) {
-            previousTrainingCourses::create([
-                'beneficiary_id' => $beneficiary->id,
-                'certificateAndType' => $previousTrainingCourses['certificateAndType'],
-                'executingAgency' => $previousTrainingCourses['executingAgency'],
-                'dateExecute' => $previousTrainingCourses['dateExecute'],
-            ]);
-        }
-    }
-}
-
-private function updateForeignLanguages($request_data, $beneficiary)
-{
-
-    foreignLanguages::where('beneficiary_id', $beneficiary->id)->delete();
-
-    $foreignLanguagesArray = $request_data['foreignLanguages'];
-    if($foreignLanguagesArray != null){
-        foreach ($foreignLanguagesArray as $foreignLanguage) {
-            foreignLanguages::create([
-                'beneficiary_id' => $beneficiary->id,
-                'namelanguage' => $foreignLanguage['namelanguage'],
-                'level' => $foreignLanguage['level'],
-            ]);
+        $educationalAttainmentArray = $request_data['educationalAttainment'];
+        if($educationalAttainmentArray != null){
+            foreach ($educationalAttainmentArray as $educationalAttainment) {
+                EducationalAttainment::create([
+                    'beneficiary_id' => $beneficiary->id,
+                    'specialization' => $educationalAttainment['specialization'],
+                    'certificate' => $educationalAttainment['certificate'],
+                    'graduationRate' => $educationalAttainment['graduationRate'],
+                    'academicYear' => $educationalAttainment['academicYear'],
+                ]);
+            }
         }
     }
 
 
 
-}
+    private function updatePreviousTrainingCourses($request_data, $beneficiary)
+    {
 
-private function updateProfessionalSkills($request_data, $beneficiary)
-{
+        previousTrainingCourses::where('beneficiary_id', $beneficiary->id)->delete();
 
-    ProfessionalSkills::where('beneficiary_id', $beneficiary->id)->delete();
-
-    $professionalSkillsArray = $request_data['professionalSkills'];
-    if($professionalSkillsArray != null){
-        foreach ($professionalSkillsArray as $professionalSkill) {
-            ProfessionalSkills::create([
-                'beneficiary_id' => $beneficiary->id,
-                'jobTitle' => $professionalSkill['jobTitle'],
-                'start' => $professionalSkill['start'],
-                'end' => $professionalSkill['end'],
-                'jobTasks' => $professionalSkill['jobTasks'],
-            ]);
+        $previousTrainingCoursesArray = $request_data['previousTrainingCourses'];
+        if($previousTrainingCoursesArray != null){
+            foreach ($previousTrainingCoursesArray as $previousTrainingCourses) {
+                previousTrainingCourses::create([
+                    'beneficiary_id' => $beneficiary->id,
+                    'certificateAndType' => $previousTrainingCourses['certificateAndType'],
+                    'executingAgency' => $previousTrainingCourses['executingAgency'],
+                    'dateExecute' => $previousTrainingCourses['dateExecute'],
+                ]);
+            }
         }
     }
-}
 
+    private function updateForeignLanguages($request_data, $beneficiary)
+    {
 
-public function deleteBeneficiary($id)
-{
+        foreignLanguages::where('beneficiary_id', $beneficiary->id)->delete();
 
-   Beneficiary::where('id', $id)->delete();
-   return response()->json(['message' => 'Beneficiary deleted successfully.']);
-}
-
-
-public function searchBeneficiary($request)
-{
-    $query = $request;
-
-    if (!$query) {
-        return response()->json(['message' => 'Query parameter is required.'], 400);
-    }
-
-    $columns = [
-        'serialNumber',
-        'date',
-        'province',
-        'name',
-        'fatherName',
-        'motherName',
-        'gender',
-        'dateOfBirth',
-        'nots',
-        'maritalStatus',
-        'needAttendant',
-        'NumberFamilyMember',
-        'losingBreadwinner',
-        'governorate',
-        'address',
-        'email',
-        'numberline',
-        'numberPhone',
-        'numberId',
-        'educationalAttainment',
-        'computerDriving',
-        'computerSkills',
-        'sectorPreferences',
-        'employment',
-        'supportRequiredTrainingLearning',
-        'supportRequiredEntrepreneurship',
-        'careerGuidanceCounselling',
-        'generalNotes'
-    ];
-
-
-    $beneficiaries = Beneficiary::where(function($q) use ($columns, $query) {
-        foreach ($columns as $column) {
-            $q->orWhereRaw("LOWER($column) LIKE ?", ['%' . strtolower($query) . '%']);
+        $foreignLanguagesArray = $request_data['foreignLanguages'];
+        if($foreignLanguagesArray != null){
+            foreach ($foreignLanguagesArray as $foreignLanguage) {
+                foreignLanguages::create([
+                    'beneficiary_id' => $beneficiary->id,
+                    'namelanguage' => $foreignLanguage['namelanguage'],
+                    'level' => $foreignLanguage['level'],
+                ]);
+            }
         }
-    })->get();
 
 
-    if ($beneficiaries->isEmpty()) {
-        return response()->json(['message' => 'No beneficiaries found with the provided query.'], 404);
+
     }
 
-    return response()->json($beneficiaries);
-}
+    private function updateProfessionalSkills($request_data, $beneficiary)
+    {
+
+        ProfessionalSkills::where('beneficiary_id', $beneficiary->id)->delete();
+
+        $professionalSkillsArray = $request_data['professionalSkills'];
+        if($professionalSkillsArray != null){
+            foreach ($professionalSkillsArray as $professionalSkill) {
+                ProfessionalSkills::create([
+                    'beneficiary_id' => $beneficiary->id,
+                    'jobTitle' => $professionalSkill['jobTitle'],
+                    'start' => $professionalSkill['start'],
+                    'end' => $professionalSkill['end'],
+                    'jobTasks' => $professionalSkill['jobTasks'],
+                ]);
+            }
+        }
+    }
+
+
+    public function deleteBeneficiary($id)
+    {
+
+    Beneficiary::where('id', $id)->delete();
+    return response()->json(['message' => 'Beneficiary deleted successfully.']);
+    }
+
+
+    public function searchBeneficiary($request)
+    {
+        $query = $request;
+
+        if (!$query) {
+            return response()->json(['message' => 'Query parameter is required.'], 400);
+        }
+
+        $columns = [
+            'serialNumber',
+            'date',
+            'province',
+            'name',
+            'fatherName',
+            'motherName',
+            'gender',
+            'dateOfBirth',
+            'nots',
+            'maritalStatus',
+            'needAttendant',
+            'NumberFamilyMember',
+            'losingBreadwinner',
+            'governorate',
+            'address',
+            'email',
+            'numberline',
+            'numberPhone',
+            'numberId',
+            'educationalAttainment',
+            'computerDriving',
+            'computerSkills',
+            'sectorPreferences',
+            'employment',
+            'supportRequiredTrainingLearning',
+            'supportRequiredEntrepreneurship',
+            'careerGuidanceCounselling',
+            'generalNotes'
+        ];
+
+
+        $beneficiaries = Beneficiary::where(function($q) use ($columns, $query) {
+            foreach ($columns as $column) {
+                $q->orWhereRaw("LOWER($column) LIKE ?", ['%' . strtolower($query) . '%']);
+            }
+        })->get();
+
+
+        if ($beneficiaries->isEmpty()) {
+            return response()->json(['message' => 'No beneficiaries found with the provided query.'], 404);
+        }
+
+        return response()->json($beneficiaries);
+    }
+
+
+    public function beneficiaryWithCourse(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'beneficiary_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        $beneficiary = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)->all();
+
+        if ($beneficiaryWithCourse->status  == 'pending') {
+           return response()->json(['message'=>'this beneficiary is already recorded this course'], 200);
+        }
+
+        foreach ($beneficiary as $key ) {
+            $coursID = $key->course_id;
+            $cours = Course::where('id',$coursID)->first();
+            if ($cours->type == 'hard') {
+                return response()->json(['message'=>'this beneficiary is already recorded hard course'], 200);
+            }
+        }
 
 
 
+        
+    }
 
+    public function ShowBeneficiaryWithCourse($id)
+    {
+        $validator =Validator::make($request->all(),[
+            'beneficiary_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+    }
 
 }
 
