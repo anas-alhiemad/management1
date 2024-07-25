@@ -23,7 +23,7 @@ class TrainerController extends Controller
         $validator =Validator::make($request->all(),[
             'name'=>'required|string',
             'email' => 'required|string|email|max:100||unique:trainers,email',
-            'phone' => 'required|string|min:10',
+            'phone' => 'required|integer|min:10',
             'address' => 'required|string',
             'specialty' => 'required|string',
             'description' => 'required|string',
@@ -78,18 +78,18 @@ class TrainerController extends Controller
         ];
 
 
-        $beneficiaries = Trainer::where(function($q) use ($columns, $query) {
+        $trainer = Trainer::where(function($q) use ($columns, $query) {
             foreach ($columns as $column) {
                 $q->orWhereRaw("LOWER($column) LIKE ?", ['%' . strtolower($query) . '%']);
             }
         })->get();
 
 
-        if ($beneficiaries->isEmpty()) {
-            return response()->json(['message' => 'No beneficiaries found with the provided query.'], 404);
+        if ($trainer->isEmpty()) {
+            return response()->json(['message' => 'No Trainer found with the provided query.'], 404);
         }
 
-        return response()->json($beneficiaries);
+        return response()->json($trainer);
     }
 
 
@@ -98,7 +98,7 @@ class TrainerController extends Controller
         $trainer = Trainer::findOrFail($id);
         $trainer->delete();
 
-        return response()->json(['message' => 'Course deleted successfully.']);
+        return response()->json(['message' => 'Trainer deleted successfully.']);
     }
 
 

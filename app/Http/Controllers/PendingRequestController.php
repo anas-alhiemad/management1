@@ -40,6 +40,13 @@ class PendingRequestController extends Controller
 
         return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
     }
+    public function showAllRequestTrainer()
+    {
+        $request = PendingRequest::where('status','pending')
+                                    ->where('type', 'trainer')->get();
+
+        return response()->json(['message' => 'all the  pendingRequest', 'dataRequest' => $request], 200);
+    }
 
     public function showAllRequestItems()
     {
