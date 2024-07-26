@@ -8,12 +8,19 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class ItemsExport implements FromCollection, WithHeadings
 {
+    protected $fields;
+
+    public function __construct(array $fields)
+    {
+        $this->fields = $fields;
+    }
+
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        return Item::all();
+        return Item::select($this->fields)->get();
     }
 
     /**
@@ -21,19 +28,6 @@ class ItemsExport implements FromCollection, WithHeadings
      */
     public function headings(): array
     {
-        return [
-            'id',
-            'name',
-            'description',
-            'quantity',
-            'minimum_quantity', // Add this field
-            'status',
-            'available',
-            'expired_date',
-            'type_id',
-            'category_id',
-            'created_at',
-            'updated_at',
-        ];
+        return $this->fields;
     }
 }
