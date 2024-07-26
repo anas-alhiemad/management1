@@ -79,7 +79,7 @@ use App\Http\Controllers\ItemController;
     Route::apiResource('categories', CategoryController::class);
 
      #################   api items   ####################
-     Route::get('items/export/excel', [ItemController::class, 'exportToExcel']);
+     Route::post('items/export/excel', [ItemController::class, 'exportToExcel']);
      
      Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
      Route::post('/items/advancedSearch', [ItemController::class, 'advancedSearch']);
