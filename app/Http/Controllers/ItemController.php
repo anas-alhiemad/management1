@@ -19,11 +19,15 @@ class ItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $items = Item::all();
+        $paginate = $request->input('paginate', 50); // Default to 50 if not provided
+        $paginate = ($paginate == 0) ? 50 : $paginate; // Set to 50 if 0 is provided
+
+        $items = Item::paginate($paginate);
         return response()->json($items, Response::HTTP_OK);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -126,10 +130,6 @@ class ItemController extends Controller
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-
-
-
-
     public function filterByType($typeId)
     {
         $items = Item::where('type_id', $typeId)->get();
@@ -152,11 +152,11 @@ class ItemController extends Controller
     }
     /////// اضافي
 
-public function lowStockItems($threshold)
-{
+  public function lowStockItems($threshold)
+   {
     $items = Item::where('quantity', '<', $threshold)->get();
     return response()->json($items, Response::HTTP_OK);
-}
+   }
 
 
 public function outdatedItems($days)
@@ -166,34 +166,12 @@ public function outdatedItems($days)
     return response()->json($items, Response::HTTP_OK);
 }
 
-
- /**
-     * Export items to Excel.
-     */
-    
-     public function exportToExcel()
-     {
-         return Excel::download(new ItemsExport, 'items.xlsx');
-     }
- 
-     public function importFromExcel(Request $request)
-     {
-        
-         $file = $request->file('excel_file');
-         Excel::import(new ItemsImport, $file);
- 
-         return response()->json(null, Response::HTTP_CREATED);
-     }
- ///////////////////////////////////////
- 
-     /**
-      * Import items from Excel.
-      */
-    
- 
 public function advancedSearch(Request $request)
 {
     $query = Item::query();
+
+    $paginate = $request->input('paginate', 50); // Default to 50 if not provided
+    $paginate = ($paginate == 0) ? 50 : $paginate; // Set to 50 if 0 is provided
 
     if ($request->filled('name')) {
         $query->where('name', 'like', '%' . $request->input('name') . '%');
@@ -209,9 +187,6 @@ public function advancedSearch(Request $request)
 
     if ($request->filled('status')) {
         $query->where('status', $request->input('status'));
-    }
-    if ($request->filled('available')) {
-        $query->where('available', $request->input('available'));
     }
 
     if ($request->filled('min_quantity')) {
@@ -230,10 +205,73 @@ public function advancedSearch(Request $request)
         $query->where('updated_at', '>', $request->input('updated_after'));
     }
 
-    $items = $query->get();
+    $items = $query->paginate($paginate);
 
     return response()->json($items, Response::HTTP_OK);
 }
+
+
+ /**
+     * Export items to Excel.
+     */
+
+     public function exportToExcel(Request $request)
+     {
+         $fields = $request->input('fields', [
+             'id',
+             'name',
+             'description',
+             'quantity',
+             'minimum_quantity', // Add this field
+             'status',
+             'available',
+             'expired_date',
+             'type_id',
+             'category_id',
+             'created_at',
+             'updated_at',
+         ]);
+
+         return Excel::download(new ItemsExport($fields), 'items.xlsx');
+     }
+
+
+     public function importFromExcel(Request $request)
+     {
+
+         $file = $request->file('excel_file');
+         Excel::import(new ItemsImport, $file);
+
+         return response()->json(null, Response::HTTP_CREATED);
+     }
+
+
+    //  public function importFromExcel(ImportExcelRequest $request)
+    //  {
+    //      $file = $request->file('excel_file');
+    //      try {
+    //          Excel::import(new ItemsImport, $file);
+    //      } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+    //          $failures = $e->failures();
+    //          $errors = [];
+    //          foreach ($failures as $failure) {
+    //              $errors[] = [
+    //                  'row' => $failure->row(),
+    //                  'attribute' => $failure->attribute(),
+    //                  'errors' => $failure->errors(),
+    //              ];
+    //          }
+    //          return response()->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+    //      }
+
+    //      return response()->json(null, Response::HTTP_CREATED);
+    //  }
+ ///////////////////////////////////////
+
+     /**
+      * Import items from Excel.
+      */
+
 
 /*
 public function sendLowStockAlerts($threshold)
