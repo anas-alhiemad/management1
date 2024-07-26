@@ -7,6 +7,8 @@ use App\Models\Course;
 use App\Models\User;
 use App\Services\SendNotificationsService;
 use App\Models\PendingRequest;
+use App\Models\TrainerCourse;
+use App\Models\BeneficiaryCourse;
 use Validator;
 class CourseController extends Controller
 {
@@ -138,5 +140,20 @@ class CourseController extends Controller
 
         return response()->json($beneficiaries);
     }
+
+    public function ShowBeneficiaryWithCourse($id)
+    {
+        $beneficiaryWithCourse = BeneficiaryCourse::where('course_id',$id)->with('beneficiary')->get();
+        return response()->json(['message'=>$beneficiaryWithCourse]);
+    }
+
+    public function ShowTrainerWithCourse($id)
+    {
+        $trainerWithCourse = TrainerCourse::where('course_id',$id)->with('trainer')->get();
+        return response()->json(['message'=>$trainerWithCourse]);
+    }
+
+
+
 
 }

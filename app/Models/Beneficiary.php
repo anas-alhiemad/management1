@@ -11,6 +11,7 @@ use App\Models\foreignLanguages;
 use App\Models\ProfessionalSkills;
 use App\Models\Document;
 use App\Models\BeneficiaryCourse;
+use App\Models\Course;
 
 class Beneficiary extends Model
 {

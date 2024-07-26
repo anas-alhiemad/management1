@@ -117,8 +117,10 @@ use App\Http\Controllers\ItemController;
     Route::get('/showdocuments/{id}', [DocumentsController::class, 'showDocuments']);
     Route::post('/updatedocuments/{id}', [DocumentsController::class, 'updateDocuments']);
     Route::post('/destroydocuments/{id}', [DocumentsController::class, 'destroyDocuments']);
-
-
+                    ###
+    Route::post('/beneficiarywithcourse', [BeneficiaryController::class, 'beneficiaryWithCourse']);
+    Route::get('/showbeneficiarywithcourse/{id}', [BeneficiaryController::class, 'ShowBeneficiaryWithCourse']);
+    Route::post('/deletebeneficiarywithcourse', [BeneficiaryController::class, 'deleteBeneficiaryWithCourse']);
 
 
       ################ api pendingRequests #######################
@@ -143,6 +145,9 @@ use App\Http\Controllers\ItemController;
     Route::post('/destroycourse/{id}', [CourseController::class, 'destroyCourse']);
     Route::post('/updatestatus/{id}', [CourseController::class, 'updateStatus']);
     Route::get('/searchcourse/{search}', [CourseController::class, 'searchCourse']); //1
+            ###
+    Route::get('/showbeneficiaryrecordcourse/{id}', [CourseController::class, 'ShowBeneficiaryWithCourse']);
+    Route::get('/showtrainerrecordcourse/{id}', [CourseController::class, 'ShowTrainerWithCourse']);
 
       ################ api Trainer #######################
 
@@ -152,6 +157,11 @@ use App\Http\Controllers\ItemController;
   //  Route::post('/updatecourse/{id}', [TrainerController::class, 'updateCourse']); searchTrainer
     Route::post('/destroytrainer/{id}', [TrainerController::class, 'destroyTrainer']);
     Route::get('/searchtrainer/{search}', [TrainerController::class, 'searchTrainer']);
+               ####
+    Route::post('/trainerwithcourse', [TrainerController::class, 'TrainerWithCourse']);
+    Route::get('/showtrainerwithcourse/{id}', [TrainerController::class, 'ShowTrainerWithCourse']);
+    Route::post('/deletetrainerwithcourse', [TrainerController::class, 'deleteTrainerWithCourse']);
+
 
 
 // });
