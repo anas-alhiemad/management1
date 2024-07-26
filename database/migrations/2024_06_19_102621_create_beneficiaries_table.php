@@ -31,8 +31,8 @@ return new class extends Migration
             $table->string('governorate', 50);
             $table->string('address', 50);
             $table->string('email', 100)->unique();
-            $table->string('numberline', 50);
-            $table->string('numberPhone', 50);
+            $table->integer('numberline');
+            $table->integer('numberPhone');
             $table->string('numberId', 50);
             $table->json('educationalAttainment')->nullable();
         //   $table->json('previousTrainingCourses')->nullable();

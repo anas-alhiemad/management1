@@ -72,7 +72,7 @@ class AuthController extends Controller
                 'name' => 'required|string|between:2,100',
                 'role' => 'required|string',
                 'email' => 'required|string|email|max:100|unique:users',
-                'number' => 'required|string|min:10',
+                'number' => 'required|integer|min:10',
                 'password' => 'required|string|min:6',
                 'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
           ]);
