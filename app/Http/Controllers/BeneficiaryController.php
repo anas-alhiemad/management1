@@ -11,12 +11,14 @@ use App\Models\previousTrainingCourses;
 use App\Models\EducationalAttainment;
 use App\Models\PendingRequest;
 use App\Models\Beneficiary;
+use App\Models\BeneficiaryCourse;
+use App\Models\Course;
 use App\Http\Controllers\PendingRequestController;
 use App\Notifications\BeneficiaryAddedNotification;
 use App\Services\SendNotificationsService;
-
 use Validator;
 use Auth;
+
 class BeneficiaryController extends Controller
 {
 
@@ -150,16 +152,16 @@ class BeneficiaryController extends Controller
                 }
         }
 
-        $requestPending = $request->all();
-        $user =User::where('id',Auth::id())->firstOrFail();
-        $userName = $user->name;
+        // $requestPending = $request->all();
+        // $user =User::where('id',Auth::id())->firstOrFail();
+        // $userName = $user->name;
         $requestPending = PendingRequest::create(['requsetPending' => array_merge($validator->validated()),
                                                   'type' =>'beneficiary',
                                                             ]);
 
 
-        $admin = User::where('role', 'manager')->first();
-        $admin->notify(new BeneficiaryAddedNotification($requestPending,$userName));
+         $admin = User::where('role', 'manager')->first();
+        // $admin->notify(new BeneficiaryAddedNotification($requestPending,$userName));
 
 
         $service = new SendNotificationsService();
@@ -456,6 +458,7 @@ class BeneficiaryController extends Controller
     }
 
 
+
     public function beneficiaryWithCourse(Request $request)
     {
         $validator =Validator::make($request->all(),[
@@ -470,31 +473,54 @@ class BeneficiaryController extends Controller
         $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)
                                                     ->where('course_id',$request->course_id)->first();
 
-        $beneficiary = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)->all();
+        $beneficiary = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)->get();
 
-        if ($beneficiaryWithCourse->status  == 'pending') {
+        if ($beneficiaryWithCourse) {
+            // if ($beneficiaryWithCourse->status  == 'pending')
            return response()->json(['message'=>'this beneficiary is already recorded this course'], 200);
         }
 
         foreach ($beneficiary as $key ) {
             $coursID = $key->course_id;
             $cours = Course::where('id',$coursID)->first();
-            if ($cours->type == 'hard') {
+            if ($cours->type == 'hared') {
                 return response()->json(['message'=>'this beneficiary is already recorded hard course'], 200);
             }
         }
-
-
-
+        $beneficiaryWithCourse = BeneficiaryCourse::create(array_merge(
+            $validator->validated()));
+            return response()->json(['message => done  beneficiary is registered for this course']);
 
     }
 
     public function ShowBeneficiaryWithCourse($id)
     {
+        $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$id)->with('course')->get();
+        return response()->json(['message'=>$beneficiaryWithCourse]);
+    }
+
+    public function deleteBeneficiaryWithCourse(Request $request)
+    {
         $validator =Validator::make($request->all(),[
             'beneficiary_id'=>'required|integer',
             'course_id'=>'required|integer',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        if ($beneficiaryWithCourse == null) {
+           return response()->json(['message'=>'this beneficiary isn\'t already recorded this course'], 200);
+        }
+        else
+        $beneficiaryWithCourse->delete();
+
+            return response()->json(['message => done  beneficiary is delete for this course']);
+
     }
 
 }

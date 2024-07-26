@@ -7,6 +7,7 @@ use App\Models\Trainer;
 use App\Models\User;
 use App\Services\SendNotificationsService;
 use App\Models\PendingRequest;
+use App\Models\TrainerCourse;
 use Validator;
 
 class TrainerController extends Controller
@@ -102,5 +103,62 @@ class TrainerController extends Controller
     }
 
 
+
+    public function TrainerWithCourse(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'countHours'=>'required|integer',
+            'trainer_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $trainerWithCourse = TrainerCourse::where('trainer_id',$request->trainer_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        if ($trainerWithCourse) {
+            // if ($beneficiaryWithCourse->status  == 'pending')
+           return response()->json(['message'=>'this trainer is already recorded this course'], 200);
+        }
+
+        $beneficiaryWithCourse = TrainerCourse::create(array_merge(
+            $validator->validated()));
+            return response()->json(['message => done  trainer is registered for this course']);
+
+    }
+
+    public function ShowTrainerWithCourse($id)
+    {
+        $trainerWithCourse = TrainerCourse::where('trainer_id',$id)->with('course')->get();
+        return response()->json(['message'=>$trainerWithCourse]);
+    }
+
+
+    public function deleteTrainerWithCourse(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'trainer_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $TrainerWithCourse = TrainerCourse::where('trainer_id',$request->trainer_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        if ($TrainerWithCourse == null) {
+           return response()->json(['message'=>'this trainer isn\'t already recorded this course'], 200);
+        }
+        else
+        $TrainerWithCourse->delete();
+
+            return response()->json(['message => done  trainer is delete for this course']);
+
+    }
 
 }
