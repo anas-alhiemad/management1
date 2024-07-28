@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Validator;
-use Maatwebsite\Excel\Facades\Excel; // تأكد من استيراد الفئة هنا
+use Maatwebsite\Excel\Facades\Excel; 
 use App\Exports\ItemsExport;
 use App\Imports\ItemsImport;
 
@@ -49,6 +49,7 @@ class ItemController extends Controller
                 'name' => 'required|string|max:255',
                 'expired_date' => 'required|date',
                 'quantity' => 'required|integer',
+                'minimum_quantity' => 'integer',
                 'description' => 'nullable|string',
                 'type_id' => 'required|integer|exists:types,id',
                 'category_id' => 'required|integer|exists:categories,id',
@@ -97,6 +98,7 @@ class ItemController extends Controller
             $validatedData = $request->validate([
                 'name' => 'sometimes|required|string|max:255',
                 'expired_date' => 'sometimes|required|date',
+                'minimum_quantity' => 'integer',
                 'quantity' => 'sometimes|required|integer',
                 'description' => 'nullable|string',
                 'type_id' => 'sometimes|required|integer|exists:types,id',
@@ -159,7 +161,8 @@ class ItemController extends Controller
    }
 
 
-public function outdatedItems($days)
+
+   public function outdatedItems($days)
 {
     $date = \Carbon\Carbon::now()->subDays($days);
     $items = Item::where('updated_at', '<', $date)->get();
@@ -244,6 +247,61 @@ public function advancedSearch(Request $request)
 
          return response()->json(null, Response::HTTP_CREATED);
      }
+
+     public function cunsumeItem(Request $request, $id)
+     {
+         try {
+             // Validate the request
+             $validator = Validator::make($request->all(), [
+                 'quantityCunsume' => 'required|integer',
+             ]);
+
+             if ($validator->fails()) {
+                 return response()->json($validator->errors(), 422);
+             }
+         } catch (ValidationException $e) {
+             return response()->json(['errors' => $e->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
+         }
+
+         // Find the item by ID
+         $item = Item::findOrFail($id);
+
+         try {
+             // Check if the quantity to consume is greater than the available quantity
+             if ($request->quantityCunsume > $item->quantity) {
+                 return response()->json(['error' => 'The quantity requested is above the existing quantity.'], 400);
+             }
+
+             // Decrease the item quantity
+             $item->quantity -= $request->quantityCunsume;
+             $item->save();
+
+             // Check if the item quantity is less than the minimum quantity
+             if ($item->quantity < $item->minimum_quantity) {
+                 // Get the user with the role of 'warehouseguard'
+                 $user = User::where('role', 'warehouseguard')->first();
+
+                 if ($user) {
+                     // Send notification to the user
+                     $notificationController = new NotificationController();
+                     $notificationController->sendFCMNotification(
+                         $user->id,
+                         "Low on quantity",
+                         "Item ({$item->name}) need more supply"
+                     );
+                 }
+             }
+         } catch (Exception $e) {
+             return response()->json(['error' => 'An error occurred while updating the item.'], 500);
+         }
+
+         return response()->json($item, Response::HTTP_OK);
+     }
+
+
+
+
+
 
 
     //  public function importFromExcel(ImportExcelRequest $request)
