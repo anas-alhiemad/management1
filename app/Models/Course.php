@@ -13,6 +13,8 @@ class Course extends Model
     protected $fillable = [
         'nameCourse',
         'coursePeriod',
+        'sessionDoration',
+        'sessionsGiven',
         'type',
         'courseStatus',
         'specialty',

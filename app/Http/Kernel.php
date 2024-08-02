@@ -64,5 +64,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'warehouseguard' => \App\Http\Middleware\CheckWarehouseGuard::class,
+        'password.changed' => \App\Http\Middleware\CheckPasswordChanged::class,
     ];
 }

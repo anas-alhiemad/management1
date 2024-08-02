@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('trainer_courses', function (Blueprint $table) {
             $table->id();
             $table->integer('countHours');
+            $table->decimal('courseProgress', 5, 1)->nullbale()->default(0);
             $table->foreignId('trainer_id')->constrained('trainers')->cascadeOnDelete();
             $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
             $table->timestamps();

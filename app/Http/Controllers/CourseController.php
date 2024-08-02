@@ -16,7 +16,8 @@ class CourseController extends Controller
     {
         $validator =Validator::make($request->all(),[
             'nameCourse'=>'required|string',
-            'coursePeriod'=>'required|string',
+            'coursePeriod'=>'required|integer',
+            'sessionDoration'=>'required|numeric|min:0',
             'type' => 'required|string',
             'courseStatus' => 'required|string',
             'specialty' => 'required|string',
@@ -100,9 +101,13 @@ class CourseController extends Controller
                 return response()->json($validator->errors(), 422);
             }
 
-            $course = Course::findOrFail($id);
-            $course->courseStatus = $request->courseStatus;
-            $course->save();
+            $course = Course::find($id)->update([$request]);
+            $beneficiaryWithCourses = BeneficiaryCourse::where('course_id',$id)->get();
+            foreach ($beneficiaryWithCourses as $beneficiaryWithCours) {
+                $beneficiaryWithCours->update(['status'=>'proceesing']);
+
+            }
+
 
             return response()->json(['message' => 'Course status updated successfully.', 'course' => $course]);
     }

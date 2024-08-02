@@ -194,8 +194,6 @@ class BeneficiaryController extends Controller
 
     public function updateBeneficiary(Request $request, $id)
     {
-
-
     $validator = Validator::make($request->all(), [
         'serialNumber'=>'required|integer|unique:beneficiaries,serialnumber,' . $id,
         'date'=>'required|date',
@@ -522,6 +520,43 @@ class BeneficiaryController extends Controller
             return response()->json(['message => done  beneficiary is delete for this course']);
 
     }
+
+    public function trackingBeneficiary(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'beneficiary_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        $course = Course::where('id',$request->course_id)->first();
+
+
+        if ($course->coursePeriod ==  $beneficiaryWithCourse-> courseProgress ) {
+
+            return response()->json(['message'=>'this beneficiary has already completed the course'], 200);
+        }
+        else {
+            $beneficiaryWithCourse->update(['courseProgress'=> $beneficiaryWithCourse-> courseProgress + $course->sessionDoration]);
+            if ($course->coursePeriod ==  $beneficiaryWithCourse-> courseProgress ){
+                $beneficiaryWithCours->update(['status'=>'completed']);
+            }
+            return response()->json(['message'=>'the attendance of the beneficiary was recorded today'], 200);
+
+        }
+
+
+    }
+
+
+
+
 
 }
 
