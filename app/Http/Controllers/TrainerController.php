@@ -161,5 +161,32 @@ class TrainerController extends Controller
             return response()->json(['message => done  trainer is delete for this course']);
 
     }
+    public function trackingTrainer(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'trainer_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $TrainerWithCourse = TrainerCourse::where('trainer_id',$request->trainer_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        $course = Course::where('id',$request->course_id)->first();
+
+        if ($TrainerWithCourse->countHours ==  $TrainerWithCourse-> courseProgress ) {
+
+            return response()->json(['message'=>'this trainer has already completed the course'], 200);
+        }
+        else {
+            $TrainerWithCourse->update(['courseProgress'=> $TrainerWithCourse-> courseProgress + $course->sessionDoration]);
+            $course->update(['sessionsGiven'=>$course->sessionsGiven + $course->sessionDoration]);
+            return response()->json(['message'=>'the attendance of the trainer was recorded today'], 200);
+
+        }
+    }
 
 }
