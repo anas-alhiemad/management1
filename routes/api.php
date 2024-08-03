@@ -79,8 +79,9 @@ use App\Http\Controllers\ItemController;
     Route::apiResource('categories', CategoryController::class);
 
      #################   api items   ####################
+     Route::post('items/cunsumeItem/{id}', [ItemController::class, 'cunsumeItem']);
      Route::post('items/export/excel', [ItemController::class, 'exportToExcel']);
-     
+
      Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
      Route::post('/items/advancedSearch', [ItemController::class, 'advancedSearch']);
      Route::resource('items', ItemController::class);
@@ -121,6 +122,7 @@ use App\Http\Controllers\ItemController;
     Route::post('/beneficiarywithcourse', [BeneficiaryController::class, 'beneficiaryWithCourse']);
     Route::get('/showbeneficiarywithcourse/{id}', [BeneficiaryController::class, 'ShowBeneficiaryWithCourse']);
     Route::post('/deletebeneficiarywithcourse', [BeneficiaryController::class, 'deleteBeneficiaryWithCourse']);
+    Route::post('/trackingbeneficiary', [BeneficiaryController::class, 'trackingBeneficiary']);
 
 
       ################ api pendingRequests #######################
@@ -161,8 +163,7 @@ use App\Http\Controllers\ItemController;
     Route::post('/trainerwithcourse', [TrainerController::class, 'TrainerWithCourse']);
     Route::get('/showtrainerwithcourse/{id}', [TrainerController::class, 'ShowTrainerWithCourse']);
     Route::post('/deletetrainerwithcourse', [TrainerController::class, 'deleteTrainerWithCourse']);
-
-
+    Route::post('/trackingtrainer', [TrainerController::class, 'trackingTrainer']);
 
 // });
 

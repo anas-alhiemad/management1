@@ -13,6 +13,7 @@ class BeneficiaryCourse extends Model
     protected $fillable = [
       'beneficiary_id',
       'course_id',
+      'courseProgress',
       'status'
     ];
 

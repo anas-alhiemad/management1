@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('nameCourse');
-            $table->string('coursePeriod');
+            $table->integer('coursePeriod');
+            $table->decimal('sessionDoration', 5, 1);
+            $table->decimal('sessionsGiven', 5, 1)->default(0)->nullable();
             $table->string('type');
             $table->string('courseStatus');
             $table->string('specialty');
@@ -22,6 +24,7 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

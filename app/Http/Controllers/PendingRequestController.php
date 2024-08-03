@@ -66,8 +66,6 @@ class PendingRequestController extends Controller
 
 
 
-
-
     public function approveRequest($id)
     {
         $request = PendingRequest::findOrFail($id);
@@ -91,10 +89,8 @@ class PendingRequestController extends Controller
             'dateOfBirth' => $request_data['dateOfBirth'],
             'nots' => $request_data['nots'],
             'maritalStatus' => $request_data['maritalStatus'],
-       //     'thereIsDisbility' => $request_data['thereIsDisbility'], //////////
             'needAttendant' => $request_data['needAttendant'],
             'NumberFamilyMember' => $request_data['NumberFamilyMember'],
-        //    'thereIsDisbilityFamilyMember' => $request_data['thereIsDisbilityFamilyMember'], ///////////
             'losingBreadwinner' => $request_data['losingBreadwinner'],
             'governorate' => $request_data['governorate'],
             'address' => $request_data['address'],
@@ -102,12 +98,9 @@ class PendingRequestController extends Controller
             'numberline' => $request_data['numberline'],
             'numberPhone' => $request_data['numberPhone'],
             'numberId' => $request_data['numberId'],
-            'educationalAttainment' => $level,     ////
-       //     'previousTrainingCourses' => $request_data['previousTrainingCourses'],  ////
-      //      'foreignLanguages' => $request_data['foreignLanguages'], ////
+            'educationalAttainment' => $level,
             'computerDriving' => $request_data['computerDriving'],
             'computerSkills' => $request_data['computerSkills'],
-        //    'professionalSkills' => $request_data['professionalSkills'],  ///
             'sectorPreferences' => $request_data['sectorPreferences'],
             'employment' => $request_data['employment'],
             'supportRequiredTrainingLearning' => $request_data['supportRequiredTrainingLearning'],
@@ -197,6 +190,7 @@ class PendingRequestController extends Controller
         $course = Course::create([
         'nameCourse' => $request_data['nameCourse'],
         'coursePeriod' => $request_data['coursePeriod'],
+        'sessionDoration' => $request_data['sessionDoration'],
         'type' => $request_data['type'],
         'courseStatus' => $request_data['courseStatus'],
         'specialty' => $request_data['specialty'],

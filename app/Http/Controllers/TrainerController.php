@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\SendNotificationsService;
 use App\Models\PendingRequest;
 use App\Models\TrainerCourse;
+use App\Models\Course;
 use Validator;
 
 class TrainerController extends Controller
@@ -161,5 +162,4 @@ class TrainerController extends Controller
 
     }
 
-    
 }

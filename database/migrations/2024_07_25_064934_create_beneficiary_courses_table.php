@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('beneficiary_id')->constrained('beneficiaries')->cascadeOnDelete();
             $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
-            $table->enum('status', ['pending', 'proceesing', 'done'])->default('pending');
+            $table->enum('status', ['pending', 'proceesing', 'completed'])->default('pending');
+            $table->decimal('courseProgress', 5, 1)->nullbale()->default(0);
             $table->timestamps();
         });
     }
