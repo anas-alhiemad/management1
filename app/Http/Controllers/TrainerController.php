@@ -161,7 +161,6 @@ class TrainerController extends Controller
             return response()->json(['message => done  trainer is delete for this course']);
 
     }
-
     public function trackingTrainer(Request $request)
     {
         $validator =Validator::make($request->all(),[
@@ -189,6 +188,5 @@ class TrainerController extends Controller
 
         }
     }
-
 
 }
