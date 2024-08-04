@@ -271,8 +271,8 @@ class PendingRequestController extends Controller
     {
 
         $pendingRequest = PendingRequest::where('status','pending')->findOrFail($id);
-        $type = $request ->type;
-        if($type = 'beneficiary')
+        $type = $pendingRequest ->type;
+        if($type == 'beneficiary')
         {
         $validator = Validator::make($request->all(), [
             'serialNumber'=>'required|integer|unique:beneficiaries,serialnumber,' . $id,
@@ -319,11 +319,12 @@ class PendingRequestController extends Controller
             return response()->json( $pendingRequest);
         }
 
-        elseif($type = 'course')
+        elseif($type == 'course')
         {
             $validator = validator::make($request->all(),[
                 'nameCourse'=>'required|string',
-                'coursePeriod'=>'required|string',
+                'coursePeriod'=>'required|integer',
+                'sessionDoration'=>'required|numeric|min:0',
                 'type' => 'required|string',
                 'courseStatus' => 'required|string',
                 'specialty' => 'required|string',
@@ -337,9 +338,24 @@ class PendingRequestController extends Controller
 
                 return response()->json(['message' => 'Pending request updated successfully.', 'data' => $pendingRequest]);
         }
+        elseif($type == 'trainer')
+        {
+            $validator = validator::make($request->all(),[
+                'name'=>'required|string',
+                'email' => 'required|string|email|max:100||unique:trainers,email',
+                'phone' => 'required|string|min:10',
+                'address' => 'required|string',
+                'specialty' => 'required|string',
+                'description' => 'required|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            }
 
+                $pendingRequest->update(['requsetPending' => $validator->validated()]);
 
-
+                return response()->json(['message' => 'Pending request updated successfully.', 'data' => $pendingRequest]);
+        }
 
 
     }

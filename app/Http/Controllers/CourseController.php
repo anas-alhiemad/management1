@@ -63,7 +63,8 @@ class CourseController extends Controller
     {
         $validator = validator::make($request->all(), [
             'nameCourse' => 'sometimes|required|string',
-            'coursePeriod' => 'sometimes|required|string',
+            'coursePeriod'=>'sometimes|integer',
+            'sessionDoration'=>'sometimes|numeric|min:0',
             'type' => 'sometimes|required|string',
             'courseStatus' => 'sometimes|required|string',
             'specialty' => 'sometimes|required|string',
@@ -157,6 +158,22 @@ class CourseController extends Controller
         $trainerWithCourse = TrainerCourse::where('course_id',$id)->with('trainer')->get();
         return response()->json(['message'=>$trainerWithCourse]);
     }
+
+
+    public function RateCompletedCourses()
+    {
+        $sumAllPeriod = Course::sum('coursePeriod');
+        $sumSessionsGiven = Course::sum('sessionsGiven');
+
+        if ($sumAllPeriod == 0) {
+            return response()->json(['message' => 'Total course period is zero, cannot calculate percentage.']);
+        }
+
+        $percentageForCompleted = number_format(($sumSessionsGiven / $sumAllPeriod) * 100,3);
+
+        return response()->json(['RateCompletedCourses'=>$percentageForCompleted]);
+    }
+
 
 
 

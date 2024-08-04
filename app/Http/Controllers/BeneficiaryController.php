@@ -18,6 +18,9 @@ use App\Notifications\BeneficiaryAddedNotification;
 use App\Services\SendNotificationsService;
 use Validator;
 use Auth;
+use App\Exports\BeneficiariesExport;
+use App\Imports\BeneficiariesImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BeneficiaryController extends Controller
 {
@@ -213,8 +216,8 @@ class BeneficiaryController extends Controller
         'governorate' => 'required|string|between:2,50',
         'address' => 'required|string|between:2,50',
         'email' => 'required|string|email|max:100',
-        'numberline' => 'required|integer|between:2,50',
-        'numberPhone' => 'required|integer|min:10',
+        'numberline' => 'required|string|between:2,50',
+        'numberPhone' => 'required|string|min:10',
         'numberId' => 'required|string|between:2,50',
         'educationalAttainment' => 'required|array',
         'previousTrainingCourses' =>'required|array',
@@ -534,28 +537,93 @@ class BeneficiaryController extends Controller
 
         $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)
                                                     ->where('course_id',$request->course_id)->first();
-
         $course = Course::where('id',$request->course_id)->first();
-
+        $today = now()->toDateString();
 
         if ($course->coursePeriod ==  $beneficiaryWithCourse-> courseProgress ) {
 
             return response()->json(['message'=>'this beneficiary has already completed the course'], 200);
         }
+
         else {
-            $beneficiaryWithCourse->update(['courseProgress'=> $beneficiaryWithCourse-> courseProgress + $course->sessionDoration]);
+
+            if ($beneficiaryWithCourse->last_attendance_date == $today) {
+                return response()->json(['message' => 'Attendance has already been recorded today'], 200);
+            }
+
+            else{
+            $beneficiaryWithCourse->update(['courseProgress'=> $beneficiaryWithCourse-> courseProgress + $course->sessionDoration,
+                                            'last_attendance_date' => $today]);
+
             if ($course->coursePeriod ==  $beneficiaryWithCourse-> courseProgress ){
                 $beneficiaryWithCours->update(['status'=>'completed']);
             }
             return response()->json(['message'=>'the attendance of the beneficiary was recorded today'], 200);
-
         }
-
+        }
 
     }
 
+    public function RateCompletedBeneficiary()
+    {
+        $countAllBeneficiary = Beneficiary::count();
+        $countAllBeneficiaryCompleted = BeneficiaryCourse::where('status','completed')->count('Status');
+
+        if ($countAllBeneficiary == 0) {
+            return response()->json(['message' => 'Total course period is zero, cannot calculate percentage.']);
+        }
+
+        $percentageForCompleted = number_format(($countAllBeneficiaryCompleted / $countAllBeneficiary) * 100,3);
+
+        return response()->json(['RateCopmleted'=>$percentageForCompleted]);
+    }
+    public function RateProceesingBeneficiary()
+    {
+        $countAllBeneficiary = Beneficiary::count();
+        $countAllBeneficiaryProceesing = BeneficiaryCourse::where('status','proceesing')->count('Status');
+
+        if ($countAllBeneficiary == 0) {
+            return response()->json(['message' => 'Total course period is zero, cannot calculate percentage.']);
+        }
+
+        $percentageForProceesing = number_format(($countAllBeneficiaryProceesing / $countAllBeneficiary) * 100,3);
+
+        return response()->json(['RateProceesing'=>$percentageForProceesing]);
+    }
+
+    public function getAverageAge()
+    {
+        $averageAge = Beneficiary::avg('dateOfBirth');
+        return response()->json(['average_age' => $averageAge]);
+    }
 
 
+    public function beneficiaryExportExcel(Request $request)
+    {
+        $fields = $request->input('fields', [
+            'serialNumber', 'date', 'province', 'name', 'fatherName', 'motherName', 'gender', 'dateOfBirth',
+            'nots', 'maritalStatus', 'needAttendant', 'NumberFamilyMember', 'losingBreadwinner', 'governorate',
+            'address', 'email', 'numberline', 'numberPhone', 'numberId', 'educationalAttainment', 'computerDriving',
+            'computerSkills', 'sectorPreferences', 'employment', 'supportRequiredTrainingLearning',
+            'supportRequiredEntrepreneurship', 'careerGuidanceCounselling', 'generalNotes'
+        ]);
+
+        return Excel::download(new BeneficiariesExport($fields), 'beneficiaries.xlsx');
+    }
+
+    public function beneficiaryImportExcel(Request $request)
+    {
+
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls',
+        ]);
+
+
+        Excel::import(new BeneficiariesImport, $request->file('file'));
+
+
+        return redirect()->back()->with('success', 'Beneficiaries imported successfully.');
+    }
 
 
 }

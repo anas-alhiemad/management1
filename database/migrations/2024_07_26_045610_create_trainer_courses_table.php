@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('countHours');
             $table->decimal('courseProgress', 5, 1)->nullbale()->default(0);
+            $table->date('last_attendance_date')->nullable();
             $table->foreignId('trainer_id')->constrained('trainers')->cascadeOnDelete();
             $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
             $table->timestamps();

@@ -1,24 +1,21 @@
 <?php
 
 namespace App\Models;
-use App\Models\Beneficiary;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
-class Document extends Model
+use App\Models\Trainer;
+class TrainerDocument extends Model
 {
     use HasFactory;
-
-    protected $table = 'documents';
+    protected $table = 'trainer_documents';
     protected $fillable = [
-        'beneficiary_id',
         'trainer_id',
         'image',
         'file_pdf',
     ];
-
-    public function beneficiary()
+    public function trainer()
     {
-        return $this->belongsTo(Beneficiary::class, 'beneficiary_id');
+        return $this->belongsTo(Trainer::class, 'trainer_id');
     }
 }

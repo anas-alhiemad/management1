@@ -13,6 +13,7 @@ class TrainerCourse extends Model
     protected $fillable = [
         'countHours',
         'courseProgress',
+        'last_attendance_date',
         'trainer_id',
         'course_id'
       ];
