@@ -14,6 +14,7 @@ class BeneficiaryCourse extends Model
       'beneficiary_id',
       'course_id',
       'courseProgress',
+      'last_attendance_date',
       'status'
     ];
 

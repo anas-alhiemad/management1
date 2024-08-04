@@ -33,7 +33,7 @@ class StaffController extends Controller
             'name' => 'required|string|between:2,100',
             'role' => 'required|string',
             'email' => 'required|string|email|max:100|unique:users',
-            'number' => 'required|integer|min:10',
+            'number' => 'required|string|min:10',
             'password' => 'required|string|min:6',
             'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',  ]);
 
@@ -130,24 +130,24 @@ class StaffController extends Controller
 
         $columns = [
             'name',
-            'password',
+            'email',
             'role',
             'number',
         ];
 
 
-        $beneficiaries = User::where(function($q) use ($columns, $query) {
+        $staff = User::where(function($q) use ($columns, $query) {
             foreach ($columns as $column) {
                 $q->orWhereRaw("LOWER($column) LIKE ?", ['%' . strtolower($query) . '%']);
             }
-        })->get();
+        })->where('role','!=','manager')->get();
 
 
-        if ($beneficiaries->isEmpty()) {
-            return response()->json(['message' => 'No beneficiaries found with the provided query.'], 404);
+        if ($staff->isEmpty()) {
+            return response()->json(['message' => 'No staff found with the provided query.'], 404);
         }
 
-        return response()->json($beneficiaries);
+        return response()->json($staff);
     }
 
     public function destroyStaff($id)
