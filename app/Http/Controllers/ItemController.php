@@ -9,13 +9,64 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Carbon;
 use Validator;
-use Maatwebsite\Excel\Facades\Excel; 
+use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ItemsExport;
 use App\Imports\ItemsImport;
-
+use App\Jobs\SendExpiryNotification;
 class ItemController extends Controller
 {
+
+      /**
+     * Get items that have less than one week to expire.
+     */
+    public function getExpiringSoonItems(Request $request)
+    {
+        $oneWeekFromNow = Carbon::now()->addWeek();
+        $paginate = $request->input('paginate', 50); // Default to 50 if not provided
+        $paginate = ($paginate == 0) ? 50 : $paginate; // Set to 50 if 0 is provided
+
+        $expiringSoonItems = Item::where('expired_date', '<=', $oneWeekFromNow)
+                                 ->where('expired_date', '>', Carbon::now())
+                                 ->paginate($paginate);
+
+        return response()->json($expiringSoonItems, Response::HTTP_OK);
+    }
+
+    /**
+     * Get items that are already expired.
+     */
+    public function getExpiredItems(Request $request)
+    {
+        $paginate = $request->input('paginate', 50); // Default to 50 if not provided
+        $paginate = ($paginate == 0) ? 50 : $paginate; // Set to 50 if 0 is provided
+
+        $expiredItems = Item::where('expired_date', '<=', Carbon::now())->paginate($paginate);
+
+        return response()->json($expiredItems, Response::HTTP_OK);
+    }
+
+       /**
+     * Check items for expiration within one week and send notifications.
+     */
+    public function checkExpiringItems()
+    {
+        $oneWeekFromNow = Carbon::now()->addWeek();
+
+        // Use chunking to process items in batches
+        Item::where('expired_date', '<=', $oneWeekFromNow)
+            ->where('expired_date', '>', Carbon::now())
+            ->where('notified_for_expiry', false)
+            ->chunk(100, function ($expiringItems) {
+                foreach ($expiringItems as $item) {
+                    SendExpiryNotification::dispatch($item);
+                }
+            });
+
+        return response()->json(['message' => 'Notifications sent for expiring items.'], Response::HTTP_OK);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -296,68 +347,4 @@ public function advancedSearch(Request $request)
          }
 
          return response()->json($item, Response::HTTP_OK);
-     }
-
-
-
-
-
-
-
-    //  public function importFromExcel(ImportExcelRequest $request)
-    //  {
-    //      $file = $request->file('excel_file');
-    //      try {
-    //          Excel::import(new ItemsImport, $file);
-    //      } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-    //          $failures = $e->failures();
-    //          $errors = [];
-    //          foreach ($failures as $failure) {
-    //              $errors[] = [
-    //                  'row' => $failure->row(),
-    //                  'attribute' => $failure->attribute(),
-    //                  'errors' => $failure->errors(),
-    //              ];
-    //          }
-    //          return response()->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
-    //      }
-
-    //      return response()->json(null, Response::HTTP_CREATED);
-    //  }
- ///////////////////////////////////////
-
-     /**
-      * Import items from Excel.
-      */
-
-
-/*
-public function sendLowStockAlerts($threshold)
-{
-    $items = Item::where('quantity', '<', $threshold)->get();
-    foreach ($items as $item) {
-        // Send alert logic here
-        // For example, send an email or a notification
-    }
-
-    return response()->json(['message' => 'Alerts sent successfully'], Response::HTTP_OK);
-
-}}
-}*/
-/*
-    public function checkItemQuantity()
-    {
-        $items = Item::all();
-
-        foreach ($items as $item) {
-            if ($item->quantity <= $item->minimum_quantity) {
-                // إرسال إشعار أو تنبيه هنا
-                // يمكنك استخدام نظام الإشعارات في Laravel لإرسال إشعارات إلى المستخدمين أو الإداريين المعنيين
-                Notification::route('mail', 'admin@example.com')
-                    ->notify(new \App\Notifications\ItemLowQuantityNotification($item));
-            }
-        }
-    }
-*/
-
-}
+     }}

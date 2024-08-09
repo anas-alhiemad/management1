@@ -54,7 +54,7 @@ use App\Http\Controllers\ItemController;
     Route::post('/updatestaff/{id}', [StaffController::class, 'updateStaff']);
     Route::post('/destroystaff/{id}', [StaffController::class, 'destroyStaff']);
     Route::post('/loginstaff', [StaffController::class, 'loginStaff']);
-    Route::get('/searchstaff/{search}', [BeneficiaryController::class, 'searchStaff']);
+    Route::get('/searchstaff/{search}', [StaffController::class, 'searchStaff']);
 
 
 
@@ -81,13 +81,15 @@ use App\Http\Controllers\ItemController;
      #################   api items   ####################
      Route::post('items/cunsumeItem/{id}', [ItemController::class, 'cunsumeItem']);
      Route::post('items/export/excel', [ItemController::class, 'exportToExcel']);
-
+     Route::get('/items/check-expiring', [ItemController::class, 'checkExpiringItems']);
+     Route::get('/items/expiring-soon', [ItemController::class, 'getExpiringSoonItems']);
+     Route::get('/items/expired', [ItemController::class, 'getExpiredItems']);
      Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
      Route::post('/items/advancedSearch', [ItemController::class, 'advancedSearch']);
      Route::resource('items', ItemController::class);
 
 
- //    Route::get('items', [ItemController::class, 'index']);
+ //Route::get('items', [ItemController::class, 'index']);
 // Route::get('items/{item}', [ItemController::class, 'show']);
 // Route::post('items', [ItemController::class, 'store']);
 // Route::put('items/{item}', [ItemController::class, 'update']);
@@ -122,6 +124,15 @@ use App\Http\Controllers\ItemController;
     Route::post('/beneficiarywithcourse', [BeneficiaryController::class, 'beneficiaryWithCourse']);
     Route::get('/showbeneficiarywithcourse/{id}', [BeneficiaryController::class, 'ShowBeneficiaryWithCourse']);
     Route::post('/deletebeneficiarywithcourse', [BeneficiaryController::class, 'deleteBeneficiaryWithCourse']);
+    Route::post('/trackingbeneficiary', [BeneficiaryController::class, 'trackingBeneficiary']);
+                    ###
+    Route::get('/ratecompletedbeneficiary', [BeneficiaryController::class, 'RateCompletedBeneficiary']);
+    Route::get('/rateproceesingbeneficiary', [BeneficiaryController::class, 'RateProceesingBeneficiary']);
+    Route::get('/getaverageage', [BeneficiaryController::class, 'getAverageAge']);
+                    ###
+    Route::post('beneficiaryexportexcel', [BeneficiaryController::class, 'beneficiaryExportExcel']);
+    Route::post('beneficiaryimportexcel', [BeneficiaryController::class, 'beneficiaryImportExcel']);
+
 
 
       ################ api pendingRequests #######################
@@ -146,6 +157,7 @@ use App\Http\Controllers\ItemController;
     Route::post('/destroycourse/{id}', [CourseController::class, 'destroyCourse']);
     Route::post('/updatestatus/{id}', [CourseController::class, 'updateStatus']);
     Route::get('/searchcourse/{search}', [CourseController::class, 'searchCourse']); //1
+    Route::get('/ratecompletedcourses', [CourseController::class, 'RateCompletedCourses']);
             ###
     Route::get('/showbeneficiaryrecordcourse/{id}', [CourseController::class, 'ShowBeneficiaryWithCourse']);
     Route::get('/showtrainerrecordcourse/{id}', [CourseController::class, 'ShowTrainerWithCourse']);
@@ -155,16 +167,19 @@ use App\Http\Controllers\ItemController;
     Route::post('/addtrainer', [TrainerController::class, 'addTrainer']);
     Route::get('/showalltrainer', [TrainerController::class, 'showAllTrainer']);
     Route::post('/showtrainer/{id}', [TrainerController::class, 'showTrainer']);
-  //  Route::post('/updatecourse/{id}', [TrainerController::class, 'updateCourse']); searchTrainer
+    Route::post('/updateTrainer/{id}', [TrainerController::class, 'updateTrainer']);
     Route::post('/destroytrainer/{id}', [TrainerController::class, 'destroyTrainer']);
     Route::get('/searchtrainer/{search}', [TrainerController::class, 'searchTrainer']);
                ####
     Route::post('/trainerwithcourse', [TrainerController::class, 'TrainerWithCourse']);
     Route::get('/showtrainerwithcourse/{id}', [TrainerController::class, 'ShowTrainerWithCourse']);
     Route::post('/deletetrainerwithcourse', [TrainerController::class, 'deleteTrainerWithCourse']);
-
-
+    Route::post('/trackingtrainer', [TrainerController::class, 'trackingTrainer']);
+             ####
+    Route::post('/adddocumentstrainer/{id}', [DocumentsController::class, 'addDocumentsTrainer']);
+    Route::get('/showdocumentstrainer/{id}', [DocumentsController::class, 'showDocumentsTrainer']);
+    Route::post('/updatedocumentstrainer/{id}', [DocumentsController::class, 'updateDocumentsTrainer']);
+    Route::post('/destroydocumentstrainer/{id}', [DocumentsController::class, 'destroyDocumentsTrainer']);
 
 // });
 
-//
