@@ -9,7 +9,7 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name','expired_date','quantity','status','description', 'type_id','category_id','available','minimum_quantity'];
+    protected $fillable = ['name','expired_date','quantity','status','description', 'type_id','category_id','available','minimum_quantity','notified_for_expiry'];
 
     public function type()
     {

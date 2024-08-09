@@ -81,7 +81,9 @@ use App\Http\Controllers\ItemController;
      #################   api items   ####################
      Route::post('items/cunsumeItem/{id}', [ItemController::class, 'cunsumeItem']);
      Route::post('items/export/excel', [ItemController::class, 'exportToExcel']);
-
+     Route::get('/items/check-expiring', [ItemController::class, 'checkExpiringItems']);
+     Route::get('/items/expiring-soon', [ItemController::class, 'getExpiringSoonItems']);
+     Route::get('/items/expired', [ItemController::class, 'getExpiredItems']);
      Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
      Route::post('/items/advancedSearch', [ItemController::class, 'advancedSearch']);
      Route::resource('items', ItemController::class);
