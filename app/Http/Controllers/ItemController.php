@@ -53,19 +53,28 @@ class ItemController extends Controller
     public function checkExpiringItems()
     {
         $oneWeekFromNow = Carbon::now()->addWeek();
+        $now = Carbon::now();
 
         // Use chunking to process items in batches
-        Item::where('expired_date', '<=', $oneWeekFromNow)
-            ->where('expired_date', '>', Carbon::now())
+        Item::where(function($query) use ($now, $oneWeekFromNow) {
+                // Include items that are expiring within the next week
+                $query->where('expired_date', '<=', $oneWeekFromNow)
+                      ->where('expired_date', '>', $now);
+            })
+            ->orWhere(function($query) use ($now) {
+                // Include items that are already expired
+                $query->where('expired_date', '<=', $now);
+            })
             ->where('notified_for_expiry', false)
-            ->chunk(100, function ($expiringItems) {
-                foreach ($expiringItems as $item) {
+            ->chunk(100, function ($items) {
+                foreach ($items as $item) {
                     SendExpiryNotification::dispatch($item);
                 }
             });
 
-        return response()->json(['message' => 'Notifications sent for expiring items.'], Response::HTTP_OK);
+        return response()->json(['message' => 'Notifications sent for expiring and expired items.'], Response::HTTP_OK);
     }
+
 
     /**
      * Display a listing of the resource.
@@ -98,7 +107,7 @@ class ItemController extends Controller
         try {
             $validator =Validator::make($request->all(),[
                 'name' => 'required|string|max:255',
-                'expired_date' => 'required|date',
+                'expired_date' => 'date',
                 'quantity' => 'required|integer',
                 'minimum_quantity' => 'integer',
                 'description' => 'nullable|string',
@@ -148,7 +157,7 @@ class ItemController extends Controller
         try {
             $validatedData = $request->validate([
                 'name' => 'sometimes|required|string|max:255',
-                'expired_date' => 'sometimes|required|date',
+                'expired_date' => 'sometimes|date',
                 'minimum_quantity' => 'integer',
                 'quantity' => 'sometimes|required|integer',
                 'description' => 'nullable|string',

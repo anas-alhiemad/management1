@@ -20,7 +20,7 @@ class CheckWarehouseGuard
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
-            if ($user && $user->role === 'warehouseguard') {
+            if ($user && ($user->role === 'warehouseguard'||$user->role === 'manager')) {
                 return $next($request);
             } else {
                 return response()->json(['message' => 'Forbidden'], 403);
