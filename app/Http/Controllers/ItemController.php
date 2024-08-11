@@ -297,7 +297,7 @@ public function advancedSearch(Request $request)
 
          return Excel::download(new ItemsExport($fields), 'items.xlsx');
      }
-
+  
 
      public function importFromExcel(Request $request)
      {

@@ -183,12 +183,12 @@ class BeneficiaryController extends Controller
 
     public function getAllBeneficiary()
     {
-        $beneficiary=Beneficiary::with('disbility','educationalAttainment','previoustrainingcourses','foreignlanguages','ProfessionalSkills') ->get();
+        $beneficiary=Beneficiary::with('disbility','educationalAttainmentLevel','previoustrainingcourses','foreignlanguages','ProfessionalSkills') ->get();
         return response()->json(['dataBeneficiary' => $beneficiary]);
     }
     public function getBeneficiary($id)
     {
-        $beneficiary=Beneficiary::with('disbility','educationalAttainment','previoustrainingcourses','foreignlanguages','ProfessionalSkills')
+        $beneficiary=Beneficiary::with('disbility','educationalAttainmentLevel','previoustrainingcourses','foreignlanguages','ProfessionalSkills')
           -> where('id',$id)->get();
         return response()->json(['dataBeneficiary' => $beneficiary]);
     }
@@ -607,22 +607,22 @@ class BeneficiaryController extends Controller
             'computerSkills', 'sectorPreferences', 'employment', 'supportRequiredTrainingLearning',
             'supportRequiredEntrepreneurship', 'careerGuidanceCounselling', 'generalNotes'
         ]);
-
-        return Excel::download(new BeneficiariesExport($fields), 'beneficiaries.xlsx');
+        $filters[] = $request->filters;
+        return Excel::download(new BeneficiariesExport($fields,$filters), 'beneficiaries.xlsx');
     }
 
     public function beneficiaryImportExcel(Request $request)
     {
 
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls',
+            'excel_file' => 'required|file|mimes:xlsx,xls',
         ]);
 
+        $file = $request->file('excel_file');
+        Excel::import(new BeneficiariesImport,$file);
 
-        Excel::import(new BeneficiariesImport, $request->file('file'));
 
-
-        return redirect()->back()->with('success', 'Beneficiaries imported successfully.');
+        return response()->json(['message' =>'Beneficiaries imported successfully.']);
     }
 
 

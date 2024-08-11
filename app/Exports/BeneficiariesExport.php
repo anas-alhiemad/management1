@@ -9,10 +9,11 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class BeneficiariesExport implements FromCollection, WithHeadings, WithMapping
 {
     protected $fields;
-
-    public function __construct(array $fields)
+    protected $filters;
+    public function __construct(array $fields, $filters)
     {
         $this->fields = $fields;
+        $this->filters = $filters;
     }
 
     /**
@@ -20,7 +21,15 @@ class BeneficiariesExport implements FromCollection, WithHeadings, WithMapping
      */
     public function collection()
     {
-        return Beneficiary::with(['disbility', 'educationalAttainment', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills'])->get();
+        $beneficiary = Beneficiary::with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills');
+        foreach ($this->filters as $key => $value) {
+            if (!empty($value)) {
+                $beneficiary = Beneficiary::with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills')->where($key, 'LIKE', '%' . $value . '%');
+            }
+        }
+
+        return $beneficiary->get();
+     //   return Beneficiary::select($this->fields)->with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills')->get();
     }
 
     /**
@@ -44,11 +53,27 @@ class BeneficiariesExport implements FromCollection, WithHeadings, WithMapping
         }
 
         // Add related data
-        $row[] = $beneficiary->disbility->pluck('disbility_field')->implode(', ');
-        $row[] = $beneficiary->educationalAttainment->pluck('educational_field')->implode(', ');
-        $row[] = $beneficiary->previoustrainingcourses->pluck('training_course_field')->implode(', ');
-        $row[] = $beneficiary->foreignlanguages->pluck('language_field')->implode(', ');
-        $row[] = $beneficiary->ProfessionalSkills->pluck('skill_field')->implode(', ');
+   //     $row[] = $beneficiary->educationalAttainment->pluck('educational_field')->implode(', ');
+        $row[] = $beneficiary->disbility->map(function($disbility) {
+            return $disbility->nameDisbility . ' - ' . $disbility->rateDisbility;
+        })->implode(', ');
+
+        $row[] = $beneficiary->educationalAttainmentLevel->map(function($educationalAttainmentLevel) {
+            return $educationalAttainmentLevel->specialization . ' - ' . $educationalAttainmentLevel->certificate. ' - ' . $educationalAttainmentLevel->graduationRate. ' - ' . $educationalAttainmentLevel->academicYear;
+        })->implode(', ');
+
+           $row[] = $beneficiary->previoustrainingcourses->map(function($previoustrainingcourses) {
+            return $previoustrainingcourses->certificateAndType . ' - ' . $previoustrainingcourses->executingAgency. ' - ' . $previoustrainingcourses->dateExecute;
+        })->implode(', ');
+
+           $row[] = $beneficiary->foreignlanguages->map(function($foreignlanguages) {
+            return $foreignlanguages->namelanguage . ' - ' . $foreignlanguages->level;
+        })->implode(', ');
+
+        $row[] = $beneficiary->ProfessionalSkills->map(function($ProfessionalSkills) {
+            return $ProfessionalSkills->jobTitle . ' - ' . $ProfessionalSkills->start. ' - ' . $ProfessionalSkills->end. ' - ' . $ProfessionalSkills->jobTasks;
+        })->implode(' _ ');
+
         return $row;
     }
 }
