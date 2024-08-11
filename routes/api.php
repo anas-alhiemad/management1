@@ -14,6 +14,7 @@ use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\FirebaseTokenController;
 
 use App\Http\Controllers\ItemController;
 
@@ -168,5 +169,7 @@ use App\Http\Controllers\ItemController;
     Route::post('/updatedocumentstrainer/{id}', [DocumentsController::class, 'updateDocumentsTrainer']);
     Route::post('/destroydocumentstrainer/{id}', [DocumentsController::class, 'destroyDocumentsTrainer']);
 
+        #################### api for fierbeas #################
+        Route::get('/firebase/access-token', [FirebaseTokenController::class, 'getAccessToken']);
 // });
 
