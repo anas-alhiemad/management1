@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Validator;
-use Maatwebsite\Excel\Facades\Excel; 
+use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ItemsExport;
 use App\Imports\ItemsImport;
 
@@ -237,7 +237,7 @@ public function advancedSearch(Request $request)
 
          return Excel::download(new ItemsExport($fields), 'items.xlsx');
      }
-
+  
 
      public function importFromExcel(Request $request)
      {

@@ -133,8 +133,6 @@ use App\Http\Controllers\ItemController;
 
 
 
-      ################ api pendingRequests #######################
-
     Route::get('/showallrequestbeneficiary', [PendingRequestController::class, 'showAllRequestBeneficiary']);
     Route::get('/showallrequesttrainer', [PendingRequestController::class, 'showAllRequestTrainer']);
     Route::get('/showAllRequestItems', [PendingRequestController::class, 'showAllRequestItems']);
