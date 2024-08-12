@@ -53,7 +53,7 @@ class SendNotificationsService
         }
     }
 
-    protected function getAccessToken()
+    public function getAccessToken()
     {
         return Cache::remember('access_token', now()->addHour(), function () {
             $client = new \Google_Client();

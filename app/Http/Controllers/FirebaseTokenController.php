@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\JsonResponse;
-
+use App\Models\User;
 class FirebaseTokenController extends Controller
 {
     public function getAccessToken(): JsonResponse
@@ -36,4 +36,13 @@ class FirebaseTokenController extends Controller
             ], 500);
         }
     }
-}
+
+    public function getFcmToken($role)
+    {
+        $Fcm_token = User::where('role',$role)->select('fcm_token')->first();
+        return response()->json([
+            'Fcm_token' =>$Fcm_token
+        ]);
+    }
+    }
+
