@@ -130,24 +130,24 @@ class StaffController extends Controller
 
         $columns = [
             'name',
-            'password',
+            'email',
             'role',
             'number',
         ];
 
 
-        $beneficiaries = User::where(function($q) use ($columns, $query) {
+        $staff = User::where(function($q) use ($columns, $query) {
             foreach ($columns as $column) {
                 $q->orWhereRaw("LOWER($column) LIKE ?", ['%' . strtolower($query) . '%']);
             }
-        })->get();
+        })->where('role','!=','manager')->get();
 
 
-        if ($beneficiaries->isEmpty()) {
-            return response()->json(['message' => 'No beneficiaries found with the provided query.'], 404);
+        if ($staff->isEmpty()) {
+            return response()->json(['message' => 'No staff found with the provided query.'], 404);
         }
 
-        return response()->json($beneficiaries);
+        return response()->json($staff);
     }
 
     public function destroyStaff($id)

@@ -66,8 +66,6 @@ class PendingRequestController extends Controller
 
 
 
-
-
     public function approveRequest($id)
     {
         $request = PendingRequest::findOrFail($id);
@@ -91,10 +89,8 @@ class PendingRequestController extends Controller
             'dateOfBirth' => $request_data['dateOfBirth'],
             'nots' => $request_data['nots'],
             'maritalStatus' => $request_data['maritalStatus'],
-       //     'thereIsDisbility' => $request_data['thereIsDisbility'], //////////
             'needAttendant' => $request_data['needAttendant'],
             'NumberFamilyMember' => $request_data['NumberFamilyMember'],
-        //    'thereIsDisbilityFamilyMember' => $request_data['thereIsDisbilityFamilyMember'], ///////////
             'losingBreadwinner' => $request_data['losingBreadwinner'],
             'governorate' => $request_data['governorate'],
             'address' => $request_data['address'],
@@ -102,12 +98,9 @@ class PendingRequestController extends Controller
             'numberline' => $request_data['numberline'],
             'numberPhone' => $request_data['numberPhone'],
             'numberId' => $request_data['numberId'],
-            'educationalAttainment' => $level,     ////
-       //     'previousTrainingCourses' => $request_data['previousTrainingCourses'],  ////
-      //      'foreignLanguages' => $request_data['foreignLanguages'], ////
+            'educationalAttainment' => $level,
             'computerDriving' => $request_data['computerDriving'],
             'computerSkills' => $request_data['computerSkills'],
-        //    'professionalSkills' => $request_data['professionalSkills'],  ///
             'sectorPreferences' => $request_data['sectorPreferences'],
             'employment' => $request_data['employment'],
             'supportRequiredTrainingLearning' => $request_data['supportRequiredTrainingLearning'],
@@ -197,6 +190,7 @@ class PendingRequestController extends Controller
         $course = Course::create([
         'nameCourse' => $request_data['nameCourse'],
         'coursePeriod' => $request_data['coursePeriod'],
+        'sessionDoration' => $request_data['sessionDoration'],
         'type' => $request_data['type'],
         'courseStatus' => $request_data['courseStatus'],
         'specialty' => $request_data['specialty'],
@@ -277,8 +271,8 @@ class PendingRequestController extends Controller
     {
 
         $pendingRequest = PendingRequest::where('status','pending')->findOrFail($id);
-        $type = $request ->type;
-        if($type = 'beneficiary')
+        $type = $pendingRequest ->type;
+        if($type == 'beneficiary')
         {
         $validator = Validator::make($request->all(), [
             'serialNumber'=>'required|integer|unique:beneficiaries,serialnumber,' . $id,
@@ -325,11 +319,12 @@ class PendingRequestController extends Controller
             return response()->json( $pendingRequest);
         }
 
-        elseif($type = 'course')
+        elseif($type == 'course')
         {
             $validator = validator::make($request->all(),[
                 'nameCourse'=>'required|string',
-                'coursePeriod'=>'required|string',
+                'coursePeriod'=>'required|integer',
+                'sessionDoration'=>'required|numeric|min:0',
                 'type' => 'required|string',
                 'courseStatus' => 'required|string',
                 'specialty' => 'required|string',
@@ -343,9 +338,24 @@ class PendingRequestController extends Controller
 
                 return response()->json(['message' => 'Pending request updated successfully.', 'data' => $pendingRequest]);
         }
+        elseif($type == 'trainer')
+        {
+            $validator = validator::make($request->all(),[
+                'name'=>'required|string',
+                'email' => 'required|string|email|max:100||unique:trainers,email',
+                'phone' => 'required|string|min:10',
+                'address' => 'required|string',
+                'specialty' => 'required|string',
+                'description' => 'required|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            }
 
+                $pendingRequest->update(['requsetPending' => $validator->validated()]);
 
-
+                return response()->json(['message' => 'Pending request updated successfully.', 'data' => $pendingRequest]);
+        }
 
 
     }

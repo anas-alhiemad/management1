@@ -11,12 +11,17 @@ use App\Models\previousTrainingCourses;
 use App\Models\EducationalAttainment;
 use App\Models\PendingRequest;
 use App\Models\Beneficiary;
+use App\Models\BeneficiaryCourse;
+use App\Models\Course;
 use App\Http\Controllers\PendingRequestController;
 use App\Notifications\BeneficiaryAddedNotification;
 use App\Services\SendNotificationsService;
-
 use Validator;
 use Auth;
+use App\Exports\BeneficiariesExport;
+use App\Imports\BeneficiariesImport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class BeneficiaryController extends Controller
 {
 
@@ -42,8 +47,8 @@ class BeneficiaryController extends Controller
             'governorate' => 'required|string|between:2,50',
             'address' => 'required|string|between:2,50',
             'email' => 'required|string|email|max:100',
-            'numberline' => 'required|integer|min:8',
-            'numberPhone' => 'required|integer|min:10',
+            'numberline' => 'required|string|min:8',
+            'numberPhone' => 'required|string|min:10',
             'numberId' => 'required|string|between:2,50',
             'educationalAttainment' => 'required|array' ,
             'previousTrainingCourses' =>'required|array',
@@ -150,16 +155,16 @@ class BeneficiaryController extends Controller
                 }
         }
 
-        $requestPending = $request->all();
-        $user =User::where('id',Auth::id())->firstOrFail();
-        $userName = $user->name;
+        // $requestPending = $request->all();
+        // $user =User::where('id',Auth::id())->firstOrFail();
+        // $userName = $user->name;
         $requestPending = PendingRequest::create(['requsetPending' => array_merge($validator->validated()),
                                                   'type' =>'beneficiary',
                                                             ]);
 
 
-        $admin = User::where('role', 'manager')->first();
-        $admin->notify(new BeneficiaryAddedNotification($requestPending,$userName));
+         $admin = User::where('role', 'manager')->first();
+        // $admin->notify(new BeneficiaryAddedNotification($requestPending,$userName));
 
 
         $service = new SendNotificationsService();
@@ -178,12 +183,12 @@ class BeneficiaryController extends Controller
 
     public function getAllBeneficiary()
     {
-        $beneficiary=Beneficiary::with('disbility','educationalAttainment','previoustrainingcourses','foreignlanguages','ProfessionalSkills') ->get();
+        $beneficiary=Beneficiary::with('disbility','educationalAttainmentLevel','previoustrainingcourses','foreignlanguages','ProfessionalSkills') ->get();
         return response()->json(['dataBeneficiary' => $beneficiary]);
     }
     public function getBeneficiary($id)
     {
-        $beneficiary=Beneficiary::with('disbility','educationalAttainment','previoustrainingcourses','foreignlanguages','ProfessionalSkills')
+        $beneficiary=Beneficiary::with('disbility','educationalAttainmentLevel','previoustrainingcourses','foreignlanguages','ProfessionalSkills')
           -> where('id',$id)->get();
         return response()->json(['dataBeneficiary' => $beneficiary]);
     }
@@ -192,8 +197,6 @@ class BeneficiaryController extends Controller
 
     public function updateBeneficiary(Request $request, $id)
     {
-
-
     $validator = Validator::make($request->all(), [
         'serialNumber'=>'required|integer|unique:beneficiaries,serialnumber,' . $id,
         'date'=>'required|date',
@@ -456,6 +459,7 @@ class BeneficiaryController extends Controller
     }
 
 
+
     public function beneficiaryWithCourse(Request $request)
     {
         $validator =Validator::make($request->all(),[
@@ -470,32 +474,157 @@ class BeneficiaryController extends Controller
         $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)
                                                     ->where('course_id',$request->course_id)->first();
 
-        $beneficiary = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)->all();
+        $beneficiary = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)->get();
 
-        if ($beneficiaryWithCourse->status  == 'pending') {
+        if ($beneficiaryWithCourse) {
+            // if ($beneficiaryWithCourse->status  == 'pending')
            return response()->json(['message'=>'this beneficiary is already recorded this course'], 200);
         }
 
         foreach ($beneficiary as $key ) {
             $coursID = $key->course_id;
             $cours = Course::where('id',$coursID)->first();
-            if ($cours->type == 'hard') {
+            if ($cours->type == 'hared') {
                 return response()->json(['message'=>'this beneficiary is already recorded hard course'], 200);
             }
         }
-
-
-
+        $beneficiaryWithCourse = BeneficiaryCourse::create(array_merge(
+            $validator->validated()));
+            return response()->json(['message => done  beneficiary is registered for this course']);
 
     }
 
     public function ShowBeneficiaryWithCourse($id)
     {
+        $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$id)->with('course')->get();
+        return response()->json(['message'=>$beneficiaryWithCourse]);
+    }
+
+    public function deleteBeneficiaryWithCourse(Request $request)
+    {
         $validator =Validator::make($request->all(),[
             'beneficiary_id'=>'required|integer',
             'course_id'=>'required|integer',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        if ($beneficiaryWithCourse == null) {
+           return response()->json(['message'=>'this beneficiary isn\'t already recorded this course'], 200);
+        }
+        else
+        $beneficiaryWithCourse->delete();
+
+            return response()->json(['message => done  beneficiary is delete for this course']);
+
     }
+
+    public function trackingBeneficiary(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'beneficiary_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $beneficiaryWithCourse = BeneficiaryCourse::where('beneficiary_id',$request->beneficiary_id)
+                                                    ->where('course_id',$request->course_id)->first();
+        $course = Course::where('id',$request->course_id)->first();
+        $today = now()->toDateString();
+
+        if ($course->coursePeriod ==  $beneficiaryWithCourse-> courseProgress ) {
+
+            return response()->json(['message'=>'this beneficiary has already completed the course'], 200);
+        }
+
+        else {
+
+            if ($beneficiaryWithCourse->last_attendance_date == $today) {
+                return response()->json(['message' => 'Attendance has already been recorded today'], 200);
+            }
+
+            else{
+            $beneficiaryWithCourse->update(['courseProgress'=> $beneficiaryWithCourse-> courseProgress + $course->sessionDoration,
+                                            'last_attendance_date' => $today]);
+
+            if ($course->coursePeriod ==  $beneficiaryWithCourse-> courseProgress ){
+                $beneficiaryWithCours->update(['status'=>'completed']);
+            }
+            return response()->json(['message'=>'the attendance of the beneficiary was recorded today'], 200);
+        }
+        }
+
+    }
+
+    public function RateCompletedBeneficiary()
+    {
+        $countAllBeneficiary = Beneficiary::count();
+        $countAllBeneficiaryCompleted = BeneficiaryCourse::where('status','completed')->count('Status');
+
+        if ($countAllBeneficiary == 0) {
+            return response()->json(['message' => 'Total course period is zero, cannot calculate percentage.']);
+        }
+
+        $percentageForCompleted = number_format(($countAllBeneficiaryCompleted / $countAllBeneficiary) * 100,3);
+
+        return response()->json(['RateCopmleted'=>$percentageForCompleted]);
+    }
+    public function RateProceesingBeneficiary()
+    {
+        $countAllBeneficiary = Beneficiary::count();
+        $countAllBeneficiaryProceesing = BeneficiaryCourse::where('status','proceesing')->count('Status');
+
+        if ($countAllBeneficiary == 0) {
+            return response()->json(['message' => 'Total course period is zero, cannot calculate percentage.']);
+        }
+
+        $percentageForProceesing = number_format(($countAllBeneficiaryProceesing / $countAllBeneficiary) * 100,3);
+
+        return response()->json(['RateProceesing'=>$percentageForProceesing]);
+    }
+
+    public function getAverageAge()
+    {
+        $averageAge = Beneficiary::avg('dateOfBirth');
+        return response()->json(['average_age' => $averageAge]);
+    }
+
+
+    public function beneficiaryExportExcel(Request $request)
+    {
+        $fields = $request->input('fields', [
+            'serialNumber', 'date', 'province', 'name', 'fatherName', 'motherName', 'gender', 'dateOfBirth',
+            'nots', 'maritalStatus', 'needAttendant', 'NumberFamilyMember', 'losingBreadwinner', 'governorate',
+            'address', 'email', 'numberline', 'numberPhone', 'numberId', 'educationalAttainment', 'computerDriving',
+            'computerSkills', 'sectorPreferences', 'employment', 'supportRequiredTrainingLearning',
+            'supportRequiredEntrepreneurship', 'careerGuidanceCounselling', 'generalNotes'
+        ]);
+        $filters[] = $request->filters;
+        return Excel::download(new BeneficiariesExport($fields,$filters), 'beneficiaries.xlsx');
+    }
+
+    public function beneficiaryImportExcel(Request $request)
+    {
+
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls',
+        ]);
+
+        $file = $request->file('excel_file');
+        Excel::import(new BeneficiariesImport,$file);
+
+
+        return response()->json(['message' =>'Beneficiaries imported successfully.']);
+    }
+
 
 }
 

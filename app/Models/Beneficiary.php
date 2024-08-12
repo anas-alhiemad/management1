@@ -11,6 +11,7 @@ use App\Models\foreignLanguages;
 use App\Models\ProfessionalSkills;
 use App\Models\Document;
 use App\Models\BeneficiaryCourse;
+use App\Models\Course;
 
 class Beneficiary extends Model
 {
@@ -30,10 +31,8 @@ class Beneficiary extends Model
             'dateOfBirth',
             'nots',
             'maritalStatus',
-//            'thereIsDisbility',
             'needAttendant',
             'NumberFamilyMember',
- //           'thereIsDisbilityFamilyMember',
             'losingBreadwinner',
             'governorate',
             'address',
@@ -42,11 +41,8 @@ class Beneficiary extends Model
             'numberPhone',
             'numberId',
             'educationalAttainment',
-  //          'previousTrainingCourses',
- //            'foreignLanguages',
             'computerDriving',
             'computerSkills',
-//           'professionalSkills',
             'sectorPreferences',
             'employment',
             'supportRequiredTrainingLearning',
@@ -69,7 +65,7 @@ class Beneficiary extends Model
         public function disbility() {
             return $this->hasMany(Disbility::class,'beneficiary_id');
         }
-        public function educationalAttainment() {
+        public function educationalAttainmentLevel() {
             return $this->hasMany(EducationalAttainment::class,'beneficiary_id');
         }
         public function previoustrainingcourses() {

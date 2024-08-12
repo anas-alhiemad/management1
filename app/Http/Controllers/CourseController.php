@@ -7,6 +7,8 @@ use App\Models\Course;
 use App\Models\User;
 use App\Services\SendNotificationsService;
 use App\Models\PendingRequest;
+use App\Models\TrainerCourse;
+use App\Models\BeneficiaryCourse;
 use Validator;
 class CourseController extends Controller
 {
@@ -14,7 +16,8 @@ class CourseController extends Controller
     {
         $validator =Validator::make($request->all(),[
             'nameCourse'=>'required|string',
-            'coursePeriod'=>'required|string',
+            'coursePeriod'=>'required|integer',
+            'sessionDoration'=>'required|numeric|min:0',
             'type' => 'required|string',
             'courseStatus' => 'required|string',
             'specialty' => 'required|string',
@@ -60,7 +63,8 @@ class CourseController extends Controller
     {
         $validator = validator::make($request->all(), [
             'nameCourse' => 'sometimes|required|string',
-            'coursePeriod' => 'sometimes|required|string',
+            'coursePeriod'=>'sometimes|integer',
+            'sessionDoration'=>'sometimes|numeric|min:0',
             'type' => 'sometimes|required|string',
             'courseStatus' => 'sometimes|required|string',
             'specialty' => 'sometimes|required|string',
@@ -98,9 +102,13 @@ class CourseController extends Controller
                 return response()->json($validator->errors(), 422);
             }
 
-            $course = Course::findOrFail($id);
-            $course->courseStatus = $request->courseStatus;
-            $course->save();
+            $course = Course::find($id)->update([$request]);
+            $beneficiaryWithCourses = BeneficiaryCourse::where('course_id',$id)->get();
+            foreach ($beneficiaryWithCourses as $beneficiaryWithCours) {
+                $beneficiaryWithCours->update(['status'=>'proceesing']);
+
+            }
+
 
             return response()->json(['message' => 'Course status updated successfully.', 'course' => $course]);
     }
@@ -138,5 +146,36 @@ class CourseController extends Controller
 
         return response()->json($beneficiaries);
     }
+
+    public function ShowBeneficiaryWithCourse($id)
+    {
+        $beneficiaryWithCourse = BeneficiaryCourse::where('course_id',$id)->with('beneficiary')->get();
+        return response()->json(['message'=>$beneficiaryWithCourse]);
+    }
+
+    public function ShowTrainerWithCourse($id)
+    {
+        $trainerWithCourse = TrainerCourse::where('course_id',$id)->with('trainer')->get();
+        return response()->json(['message'=>$trainerWithCourse]);
+    }
+
+
+    public function RateCompletedCourses()
+    {
+        $sumAllPeriod = Course::sum('coursePeriod');
+        $sumSessionsGiven = Course::sum('sessionsGiven');
+
+        if ($sumAllPeriod == 0) {
+            return response()->json(['message' => 'Total course period is zero, cannot calculate percentage.']);
+        }
+
+        $percentageForCompleted = number_format(($sumSessionsGiven / $sumAllPeriod) * 100,3);
+
+        return response()->json(['RateCompletedCourses'=>$percentageForCompleted]);
+    }
+
+
+
+
 
 }

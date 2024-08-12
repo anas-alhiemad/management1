@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Beneficiary;
-use App\Modela\Course;
+use App\Models\Course;
 class BeneficiaryCourse extends Model
 {
     use HasFactory;
@@ -13,6 +13,8 @@ class BeneficiaryCourse extends Model
     protected $fillable = [
       'beneficiary_id',
       'course_id',
+      'courseProgress',
+      'last_attendance_date',
       'status'
     ];
 
@@ -22,7 +24,7 @@ class BeneficiaryCourse extends Model
     }
     public function course()
     {
-        return $this->belongsTo(Course::class, 'beneficiary_id');
+        return $this->belongsTo(Course::class, 'course_id');
     }
 
 }

@@ -7,6 +7,8 @@ use App\Models\Trainer;
 use App\Models\User;
 use App\Services\SendNotificationsService;
 use App\Models\PendingRequest;
+use App\Models\TrainerCourse;
+use App\Models\Course;
 use Validator;
 
 class TrainerController extends Controller
@@ -23,7 +25,7 @@ class TrainerController extends Controller
         $validator =Validator::make($request->all(),[
             'name'=>'required|string',
             'email' => 'required|string|email|max:100||unique:trainers,email',
-            'phone' => 'required|integer|min:10',
+            'phone' => 'required|string|min:10',
             'address' => 'required|string',
             'specialty' => 'required|string',
             'description' => 'required|string',
@@ -51,6 +53,29 @@ class TrainerController extends Controller
 
     }
 
+
+
+
+    public function updateTrainer(Request $request, $id)
+    {
+        $trainer = Trainer::findOrFail($id);
+        $validator = validator::make($request->all(), [
+            'name' => 'required|string',
+            'email' => 'required|string|email|max:100|unique:trainers,email,' . $trainer->id,
+            'phone' => 'required|string|min:10',
+            'address' => 'required|string',
+            'specialty' => 'required|string',
+            'description' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $trainer->update($validator->validated());
+
+        return response()->json(['message' => 'Trainer updated successfully.', 'course' => $trainer]);
+    }
 
 
     public function showTrainer($id)
@@ -93,6 +118,9 @@ class TrainerController extends Controller
     }
 
 
+
+
+
     public function destroyTrainer($id)
     {
         $trainer = Trainer::findOrFail($id);
@@ -100,6 +128,111 @@ class TrainerController extends Controller
 
         return response()->json(['message' => 'Trainer deleted successfully.']);
     }
+
+
+
+    public function TrainerWithCourse(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'countHours'=>'required|integer',
+            'trainer_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $trainerWithCourse = TrainerCourse::where('trainer_id',$request->trainer_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        if ($trainerWithCourse) {
+           return response()->json(['message'=>'this trainer is already recorded this course'], 200);
+        }
+
+        $beneficiaryWithCourse = TrainerCourse::create(array_merge(
+            $validator->validated()));
+            return response()->json(['message => done  trainer is registered for this course']);
+
+    }
+
+
+    public function ShowTrainerWithCourse($id)
+    {
+        $trainerWithCourse = TrainerCourse::where('trainer_id',$id)->with('course')->get();
+        return response()->json(['message'=>$trainerWithCourse]);
+    }
+
+
+
+    public function deleteTrainerWithCourse(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'trainer_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $TrainerWithCourse = TrainerCourse::where('trainer_id',$request->trainer_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        if ($TrainerWithCourse == null) {
+           return response()->json(['message'=>'this trainer isn\'t already recorded this course'], 200);
+        }
+        else
+        $TrainerWithCourse->delete();
+
+            return response()->json(['message => done  trainer is delete for this course']);
+
+    }
+
+
+    public function trackingTrainer(Request $request)
+    {
+        $validator =Validator::make($request->all(),[
+            'trainer_id'=>'required|integer',
+            'course_id'=>'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $TrainerWithCourse = TrainerCourse::where('trainer_id',$request->trainer_id)
+                                                    ->where('course_id',$request->course_id)->first();
+
+        $course = Course::where('id',$request->course_id)->first();
+        $today = now()->toDateString();
+
+        if ($TrainerWithCourse->countHours ==  $TrainerWithCourse-> courseProgress ) {
+
+            return response()->json(['message'=>'this trainer has already completed the course'], 200);
+        }
+        else {
+
+            if ($TrainerWithCourse->last_attendance_date == $today) {
+                return response()->json(['message' => 'Attendance has already been recorded today'], 200);
+            }
+
+            $TrainerWithCourse->update(['courseProgress'=> $TrainerWithCourse-> courseProgress + $course->sessionDoration,
+                                        'last_attendance_date' => $today]);
+            $course->update(['sessionsGiven'=>$course->sessionsGiven + $course->sessionDoration]);
+            return response()->json(['message'=>'the attendance of the trainer was recorded today'], 200);
+
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 
 
