@@ -174,7 +174,7 @@ class BeneficiaryController extends Controller
             'body' => 'This is a test notification sent via FCM.',
         ];
         $response = $service->sendByFcm($fcmToken, $messageData);
-
+        $accessToken =$service->getAccessToken();
 
         return response()->json(['message' => 'Request submitted successfully.','data'=>$validator->validated()]);
 

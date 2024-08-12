@@ -170,6 +170,7 @@ use App\Http\Controllers\ItemController;
     Route::post('/destroydocumentstrainer/{id}', [DocumentsController::class, 'destroyDocumentsTrainer']);
 
         #################### api for fierbeas #################
-        Route::get('/firebase/access-token', [FirebaseTokenController::class, 'getAccessToken']);
+    Route::get('/firebase/access-token', [FirebaseTokenController::class, 'getAccessToken']) ;
+    Route::get('/getfcmtoken/{rule}', [FirebaseTokenController::class, 'getFcmToken']);
 // });
 
