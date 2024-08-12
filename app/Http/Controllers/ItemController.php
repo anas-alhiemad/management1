@@ -98,10 +98,7 @@ class ItemController extends Controller
         // This is usually for returning a view in web applications.
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-
+   
     public function store(Request $request)
     {
         try {
@@ -182,9 +179,7 @@ class ItemController extends Controller
         return response()->json($item, Response::HTTP_OK);
     }
 
-    /**w
-     * Remove the specified resource from storage.
-     */
+   
     public function destroy(Item $item)
     {
         $item->delete();
@@ -285,7 +280,7 @@ public function advancedSearch(Request $request)
              'name',
              'description',
              'quantity',
-             'minimum_quantity', // Add this field
+             'minimum_quantity', 
              'status',
              'available',
              'expired_date',
