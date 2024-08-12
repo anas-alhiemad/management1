@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 class NotificationController extends Controller
 {
 
-    // need new method to send notification to admins
+  
 
     public function sendFCMNotification($userId,$title,$body,$time = null)
     {

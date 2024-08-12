@@ -15,7 +15,7 @@ use App\Http\Controllers\DocumentsController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\FirebaseTokenController;
-
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ItemController;
 
 /*
@@ -29,12 +29,6 @@ use App\Http\Controllers\ItemController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-// Route::group([
-//     'middleware' => 'api',
-// ], function ($router) { /////
 
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
@@ -59,10 +53,10 @@ use App\Http\Controllers\ItemController;
 
 
 
-         ########################     api Type ########################
+           ########################     api Type ########################
     Route::apiResource('types', TypeController::class);
 
-             ########################     api Category ########################
+           ########################     api Category ########################
     Route::middleware(['jwt.auth', 'warehouseguard'])->group(function () {
     Route::post('categories/{category}/accept', [CategoryController::class, 'acceptRequest']);
     Route::post('categories/{category}/reject', [CategoryController::class, 'rejectRequest']);
@@ -79,21 +73,18 @@ use App\Http\Controllers\ItemController;
     Route::post('/items/advancedSearch', [ItemController::class, 'advancedSearch']);
     Route::resource('items', ItemController::class);
     });
- //Route::get('items', [ItemController::class, 'index']);
-// Route::get('items/{item}', [ItemController::class, 'show']);
-// Route::post('items', [ItemController::class, 'store']);
-// Route::put('items/{item}', [ItemController::class, 'update']);
-// Route::delete('items/{item}', [ItemController::class, 'destroy']);
 
-// Route::get('items/type/{typeId}', [ItemController::class, 'filterByType']);
-// Route::get('items/category/{categoryId}', [ItemController::class, 'filterByCategory']);
-// Route::get('items/status/{status}', [ItemController::class, 'filterByStatus']);
 
-//Route::get('items/{item}/history', [ItemController::class, 'history']);
+           ########################     api Report ########################
 
-//Route::get('items/export/excel', [ItemController::class, 'exportToExcel']);
-//Route::post('items/import/excel', [ItemController::class, 'importFromExcel']);
-//Route::get('items/search', [ItemController::class, 'search']);
+
+   Route::post('/reports', [ReportController::class, 'store']);
+   Route::get('/reports', [ReportController::class, 'index']);
+   Route::get('/reports/{id}', [ReportController::class, 'show']);
+   Route::put('/reports/{id}', [ReportController::class, 'update']);
+   Route::delete('/reports/{id}', [ReportController::class, 'destroy']);
+   Route::get('/reports/{id}/file', [ReportController::class, 'getFile']);
+
 
 
        #################   api beneficiary   ####################
