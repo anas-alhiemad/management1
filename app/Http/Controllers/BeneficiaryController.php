@@ -155,18 +155,16 @@ class BeneficiaryController extends Controller
                 }
         }
 
-        // $requestPending = $request->all();
-        // $user =User::where('id',Auth::id())->firstOrFail();
+          // $requestPending = $request->all();
+         // $user =User::where('id',Auth::id())->firstOrFail();
         // $userName = $user->name;
+       // $admin->notify(new BeneficiaryAddedNotification($requestPending,$userName));
         $requestPending = PendingRequest::create(['requsetPending' => array_merge($validator->validated()),
                                                   'type' =>'beneficiary',
                                                             ]);
 
 
-         $admin = User::where('role', 'manager')->first();
-        // $admin->notify(new BeneficiaryAddedNotification($requestPending,$userName));
-
-
+        $admin = User::where('role', 'manager')->first();
         $service = new SendNotificationsService();
         $fcmToken = $admin->fcm_token;
         $messageData = [
