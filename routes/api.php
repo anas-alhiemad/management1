@@ -163,5 +163,7 @@ use App\Http\Controllers\ItemController;
         #################### api for fierbeas #################
     Route::get('/firebase/access-token', [FirebaseTokenController::class, 'getAccessToken']) ;
     Route::get('/getfcmtoken/{rule}', [FirebaseTokenController::class, 'getFcmToken']);
+    Route::post('/storenotification', [FirebaseTokenController::class, 'storeNotification']);
+    Route::get('/shownotification/{id}', [FirebaseTokenController::class, 'showNotification']);
 // });
 

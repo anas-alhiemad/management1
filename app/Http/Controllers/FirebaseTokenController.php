@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\JsonResponse;
 use App\Models\User;
+use Validator;
+use App\Notifications\addedNotification;
 class FirebaseTokenController extends Controller
 {
     public function getAccessToken(): JsonResponse
@@ -44,5 +46,31 @@ class FirebaseTokenController extends Controller
             'Fcm_token' =>$Fcm_token
         ]);
     }
+
+    public function storeNotification(Request $request){
+        $validator = Validator::make($request->all(), [
+            'Fcm_token' => 'required|string',
+            'messageNotification' => 'required|array',
+            'messageNotification.*.titleNotification' => 'required|string',
+            'messageNotification.*.bodyNotification' => 'required|string',
+        ]);
+        
+        $user = User::where('fcm_token', $request->Fcm_token)->first();
+
+        $messageData = $request->messageNotification ;
+        $user->notify(new addedNotification($messageData));   
+        return response()->json([
+            'messageNotification' =>"done store data"
+        ]);
+    }
+    public function showNotification($id){
+
+        $user = User::find($id); 
+        $notifications = $user->notifications;
+        return response()->json(["notifications" => $notifications]);
+    }
+
+
+
     }
 
