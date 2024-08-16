@@ -65,7 +65,7 @@ class Beneficiary extends Model
         public function disbility() {
             return $this->hasMany(Disbility::class,'beneficiary_id');
         }
-        public function educationalAttainmentLevel() {
+        public function educational() {
             return $this->hasMany(EducationalAttainment::class,'beneficiary_id');
         }
         public function previoustrainingcourses() {

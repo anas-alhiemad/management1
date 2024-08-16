@@ -24,15 +24,15 @@ class BeneficiariesExport implements FromCollection, WithHeadings, WithMapping
         // $columns = ['date',
         // 'province',            'gender',
         //     'dateOfBirth',]:
-        $beneficiary = Beneficiary::with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills');
+        $beneficiary = Beneficiary::with('disbility', 'educational', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills');
         foreach ($this->filters as $key => $value) {
             if (!empty($value)) {
-                $beneficiary = Beneficiary::with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills')->where($key,$value);
+                $beneficiary = Beneficiary::with('disbility', 'educational', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills')->where($key,$value);
             }
         }
 
         return $beneficiary->get();
-     //   return Beneficiary::select($this->fields)->with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills')->get();
+     //   return Beneficiary::select($this->fields)->with('disbility', 'educational', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills')->get();
     }
 
     /**
@@ -61,8 +61,8 @@ class BeneficiariesExport implements FromCollection, WithHeadings, WithMapping
             return $disbility->nameDisbility . ' - ' . $disbility->rateDisbility;
         })->implode(', ');
 
-        $row[] = $beneficiary->educationalAttainmentLevel->map(function($educationalAttainmentLevel) {
-            return $educationalAttainmentLevel->specialization . ' - ' . $educationalAttainmentLevel->certificate. ' - ' . $educationalAttainmentLevel->graduationRate. ' - ' . $educationalAttainmentLevel->academicYear;
+        $row[] = $beneficiary->educational->map(function($educational) {
+            return $educational->specialization . ' - ' . $educational->certificate. ' - ' . $educational->graduationRate. ' - ' . $educational->academicYear;
         })->implode(', ');
 
            $row[] = $beneficiary->previoustrainingcourses->map(function($previoustrainingcourses) {

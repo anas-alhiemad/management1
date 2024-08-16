@@ -3,7 +3,7 @@ namespace App\Imports;
 
 use App\Models\Beneficiary;
 use App\Models\Disbility;
-use App\Models\EducationalAttainmentLevel;
+use App\Models\educational;
 use App\Models\PreviousTrainingCourse;
 use App\Models\ForeignLanguage;
 use App\Models\ProfessionalSkill;
@@ -68,7 +68,7 @@ class BeneficiariesImport implements ToModel, WithHeadingRow
         $educationalAttainments = explode(', ', $row['educational_attainments']);
         foreach ($educationalAttainments as $attainment) {
             list($specialization, $certificate, $graduationRate, $academicYear) = explode(' - ', $attainment);
-            $beneficiary->educationalAttainmentLevel()->Create(
+            $beneficiary->educational()->Create(
               [  'specialization' => $specialization,
                     'certificate' => $certificate,
                     'graduationRate' => $graduationRate,
