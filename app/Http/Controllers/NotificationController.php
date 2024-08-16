@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\Cache;
 class NotificationController extends Controller
 {
 
-  
+    // need new method to send notification to admins
 
     public function sendFCMNotification($userId,$title,$body,$time = null)
-    {
+    {try {
+
         $apiUrl = 'https://fcm.googleapis.com/v1/projects/warehouse-management-d8a87/messages:send';
 
 
@@ -45,6 +46,9 @@ class NotificationController extends Controller
         $response = Http::withHeader('Authorization', 'Bearer ' . $accessToken)->post($apiUrl, $message);
 
         return $response->json();
+    } catch (\Throwable $th) {
+        //throw $th;
+    }
 
     }
 
