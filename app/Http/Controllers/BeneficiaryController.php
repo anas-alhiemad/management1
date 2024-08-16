@@ -50,7 +50,7 @@ class BeneficiaryController extends Controller
             'numberline' => 'required|string|min:8',
             'numberPhone' => 'required|string|min:10',
             'numberId' => 'required|string|between:2,50',
-            'educationalAttainment' => 'required|array' ,
+            'educational' => 'required|array' ,
             'previousTrainingCourses' =>'required|array',
             'foreignLanguages' => 'required|array',
             'computerDriving' => 'required|string|between:2,50',
@@ -97,14 +97,14 @@ class BeneficiaryController extends Controller
         }
 
 
-        if($request->educationalAttainment[0] != 'no'  ){      // أامي
+        if($request->educational[0] != 'no'  ){      // أامي
 
             $validator1 = Validator::make($request->all(),[
-                'educationalAttainment.*.educationalAttainmentLevel' => 'required|string|between:2,50',
-                'educationalAttainment.*.specialization' => 'nullable|string|between:2,200',
-                'educationalAttainment.*.certificate' => 'nullable|string|between:2,200',
-                'educationalAttainment.*.graduationRate' => 'nullable|string|between:2,200',
-                'educationalAttainment.*.academicYear' => 'required|string|between:2,50',
+                'educational.*.educationalAttainmentLevel' => 'required|string|between:2,50',
+                'educational.*.specialization' => 'nullable|string|between:2,200',
+                'educational.*.certificate' => 'nullable|string|between:2,200',
+                'educational.*.graduationRate' => 'nullable|string|between:2,200',
+                'educational.*.academicYear' => 'required|string|between:2,50',
              ]);
 
 
@@ -181,12 +181,12 @@ class BeneficiaryController extends Controller
 
     public function getAllBeneficiary()
     {
-        $beneficiary=Beneficiary::with('disbility','educationalAttainmentLevel','previoustrainingcourses','foreignlanguages','ProfessionalSkills') ->get();
+        $beneficiary=Beneficiary::with('disbility','educational','previoustrainingcourses','foreignlanguages','ProfessionalSkills') ->get();
         return response()->json(['dataBeneficiary' => $beneficiary]);
     }
     public function getBeneficiary($id)
     {
-        $beneficiary=Beneficiary::with('disbility','educationalAttainmentLevel','previoustrainingcourses','foreignlanguages','ProfessionalSkills')
+        $beneficiary=Beneficiary::with('disbility','educational','previoustrainingcourses','foreignlanguages','ProfessionalSkills')
           -> where('id',$id)->get();
         return response()->json(['dataBeneficiary' => $beneficiary]);
     }
@@ -217,7 +217,7 @@ class BeneficiaryController extends Controller
         'numberline' => 'required|string|between:2,50',
         'numberPhone' => 'required|string|min:10',
         'numberId' => 'required|string|between:2,50',
-        'educationalAttainment' => 'required|array',
+        'educational' => 'required|array',
         'previousTrainingCourses' =>'required|array',
         'foreignLanguages' => 'required|array',
         'computerDriving' => 'required|string|between:2,50',
@@ -235,7 +235,7 @@ class BeneficiaryController extends Controller
 
     $request_data = $request->all();
 
-    $educationalAttainmentArraylevel = $request_data['educationalAttainment'];
+    $educationalAttainmentArraylevel = $request_data['educational'];
     foreach ($educationalAttainmentArraylevel as $attainment) {
         $level = $attainment['educationalAttainmentLevel'];
         break;}
@@ -320,7 +320,7 @@ class BeneficiaryController extends Controller
 
         EducationalAttainment::where('beneficiary_id', $beneficiary->id)->delete();
 
-        $educationalAttainmentArray = $request_data['educationalAttainment'];
+        $educationalAttainmentArray = $request_data['educational'];
         if($educationalAttainmentArray != null){
             foreach ($educationalAttainmentArray as $educationalAttainment) {
                 EducationalAttainment::create([

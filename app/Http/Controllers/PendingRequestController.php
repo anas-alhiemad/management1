@@ -73,7 +73,7 @@ class PendingRequestController extends Controller
         $request_data = $request ->requsetPending;
 
         if($type == 'beneficiary'){
-        $educationalAttainmentArraylevel = $request_data['educationalAttainment'];
+        $educationalAttainmentArraylevel = $request_data['educational'];
         foreach ($educationalAttainmentArraylevel as $attainment) {
             $level = $attainment['educationalAttainmentLevel'];
             break;}
@@ -130,7 +130,7 @@ class PendingRequestController extends Controller
             }
         }
 
-        $educationalAttainmentArray = $request_data['educationalAttainment'];
+        $educationalAttainmentArray = $request_data['educational'];
         if($educationalAttainmentArray != null){
             foreach ($educationalAttainmentArray as $educationalAttainment) {
                 EducationalAttainment::create([
@@ -296,7 +296,7 @@ class PendingRequestController extends Controller
             'numberline' => 'required|string|between:2,50',
             'numberPhone' => 'required|string|min:10',
             'numberId' => 'required|string|between:2,50',
-            'educationalAttainment' => 'required|array',
+            'educational' => 'required|array',
             'previousTrainingCourses' =>'required|array',
             'foreignLanguages' => 'required|array',
             'computerDriving' => 'required|string|between:2,50',
