@@ -21,10 +21,13 @@ class BeneficiariesExport implements FromCollection, WithHeadings, WithMapping
      */
     public function collection()
     {
+        // $columns = ['date',
+        // 'province',            'gender',
+        //     'dateOfBirth',]:
         $beneficiary = Beneficiary::with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills');
         foreach ($this->filters as $key => $value) {
             if (!empty($value)) {
-                $beneficiary = Beneficiary::with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills')->where($key, 'LIKE', '%' . $value . '%');
+                $beneficiary = Beneficiary::with('disbility', 'educationalAttainmentLevel', 'previoustrainingcourses', 'foreignlanguages', 'ProfessionalSkills')->where($key,$value);
             }
         }
 

@@ -598,6 +598,12 @@ class BeneficiaryController extends Controller
 
     public function beneficiaryExportExcel(Request $request)
     {
+        // $validator =Validator::make($request->all(),[
+        //     'filters'=>'required|array',
+        // ]);
+        // if ($validator->fails()) {
+        //     return response()->json($validator->errors(), 422);
+        // }
         $fields = $request->input('fields', [
             'serialNumber', 'date', 'province', 'name', 'fatherName', 'motherName', 'gender', 'dateOfBirth',
             'nots', 'maritalStatus', 'needAttendant', 'NumberFamilyMember', 'losingBreadwinner', 'governorate',
