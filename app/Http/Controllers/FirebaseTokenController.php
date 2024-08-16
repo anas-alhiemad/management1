@@ -54,6 +54,10 @@ class FirebaseTokenController extends Controller
             'messageNotification.*.titleNotification' => 'required|string',
             'messageNotification.*.bodyNotification' => 'required|string',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
         
         $user = User::where('fcm_token', $request->Fcm_token)->first();
 

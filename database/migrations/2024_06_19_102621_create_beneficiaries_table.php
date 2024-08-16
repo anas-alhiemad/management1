@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('numberline');
             $table->string('numberPhone');
             $table->string('numberId', 50);
-            $table->string('educationalAttainment')->nullable();
+            $table->json('educationalAttainment')->nullable();
             $table->string('computerDriving', 50);
             $table->string('computerSkills', 200);
             $table->string('sectorPreferences');
