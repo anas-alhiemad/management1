@@ -51,8 +51,8 @@ class FirebaseTokenController extends Controller
         $validator = Validator::make($request->all(), [
             'Fcm_token' => 'required|string',
             'messageNotification' => 'required|array',
-            'messageNotification.*.titleNotification' => 'required|string',
-            'messageNotification.*.bodyNotification' => 'required|string',
+            'messageNotification.titleNotification' => 'required|string',
+            'messageNotification.bodyNotification' => 'required|string',
         ]);
 
         if ($validator->fails()) {
